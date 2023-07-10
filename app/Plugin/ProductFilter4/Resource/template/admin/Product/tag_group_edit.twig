@@ -1,0 +1,89 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['product', 'plg_product_filter4_tag_group'] %}
+
+{% block title %}{{ 'plg_product_filter4.admin.tag_group.page_title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.product.product_management'|trans }}{% endblock %}
+
+
+{% block stylesheet %}
+<style>
+    #tag_group_Tags div{
+        width:180px;
+        margin-bottom: 25px;
+    }
+</style>
+{% endblock %}
+
+{% block javascript %}
+{% endblock javascript %}
+
+{% block main %}
+
+    <form method="post" action="{{ tag_group_id ? url('plg_product_filter4_admin_tag_group_edit', {'id': tag_group_id}) : url('plg_product_filter4_admin_tag_group_new') }}">
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>{{ 'admin.setting.shop.delivery.base_info'|trans }}</span></div>
+                        <div id="ex-delivery-basic" class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'plg_product_filter4.admin.tag_group.group_name'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.name) }}
+                                    {{ form_errors(form.name) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>{{ 'plg_product_filter4.admin.tag_group.list_title'|trans }}</span></div>
+                        <div id="ex-delivery-payment" class="card-body">
+                            <div>
+                                {{ form_widget(form.Tags, {'label_attr': {'class': 'checkbox-inline'}}) }}
+                                {{ form_errors(form.Tags) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink" href="{{ url('plg_product_filter4_admin_tag_group_index') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'plg_product_filter4.admin.tag_group.group_list'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                {{ form_widget(form.visible) }}
+                                {{ form_errors(form.visible) }}
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5" type="submit">{{ 'admin.common.registration'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

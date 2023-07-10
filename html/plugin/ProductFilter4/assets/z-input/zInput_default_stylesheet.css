@@ -1,0 +1,46 @@
+body{
+font-family:"Arial", sans-serif;
+}
+
+.zInputWrapper{
+display:inline-block;
+}
+
+.zInput{
+display:inline-block;
+width: 80px;
+height:35px;
+background-color: white;
+margin:4px;
+padding: 2px;
+text-align:center;
+cursor:default;
+color: #336600;
+border: #336600 1px solid;
+border-radius:5px;
+font-size: 12px;
+overflow:hidden;
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
+
+.zCheckbox{
+color: #666666;
+border: #666666 1px solid;
+}
+
+.zSelected{
+color: white;
+border: #1e5f91 1px solid;
+background-color:#336600;
+}
+
+.zSelected.zCheckbox{
+background-color: #1e5f91;
+
+}

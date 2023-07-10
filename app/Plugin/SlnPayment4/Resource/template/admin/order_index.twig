@@ -1,0 +1,109 @@
+<script>
+    $(function () {
+        $('#search_box_sln_pay_status').appendTo($('#search_form > div.c-subContents'));
+
+        $('<th class="border-top-0 pt-2 pb-2 text-center">決済状況</th>').insertAfter($('#search_result > thead > tr > th:eq(3)'));
+
+        $('#sln_bulk_command').insertAfter($('#form_bulk > div:eq(0)'));
+
+        {% for Order in pagination %}
+            $('#search_result > tbody > tr:eq({{ loop.index0 }}) > td:eq(3)').after('<td class="align-middle text-center">{% if viewPayStatus[Order.id] is defined %}{{ pay_status[viewPayStatus[Order.id].paymentStatus] }}{% endif %}</td>')
+        {% endfor %}
+
+        // プログレスバーの表示を制御
+        $('#bulk_sln_payment').on('click', function (e) {
+            //alert(1119);
+            var eventTarget = $(e.currentTarget);
+            var type = eventTarget.data('type');
+            var modal = $('#sentUpdateModal');
+            switch (type) {
+                case 'sln_payment':
+                    if (eventTarget.data('bulk-update')) {
+                        if ($('#option_bulk_sln_payment').val() == '') {
+                            alert('クレジットカード決済を選択してください');
+                            return;
+                        }
+                        updater = new BulkPaymentUpdate(modal, eventTarget);
+                        modal.modal();
+                    } else {
+                        updater = new SimpleStatusUpdate(modal, eventTarget);
+                    }
+            }
+            $('.modal-title', modal).text(updater.modalTitle);
+            $('.modal-body > p.modal-message', modal).text("{{ 'admin.order.bulk_action__in_progress_message'|trans }}");
+            $('button', modal).hide();
+            $('#bulk-options').hide();
+            $('.progress', modal).show();
+            updater.totalCount = updater.getTotalCount();
+            var progress = new $.Deferred();
+            progress.progress(function () {
+                updater.progress(this, progress);
+            }).fail(function () {
+                updater.fail(this);
+            }).always(function () {
+                updater.always(this);
+            });
+            updater.getPromises(progress);
+        });
+    });
+
+    /*
+     * 決済一括実行
+     */
+    function BulkPaymentUpdate(modal, eventTarget) {
+        ConfirmationModal.call(this, modal);
+        this.eventTarget = eventTarget;
+    }
+    // extend super class
+    BulkPaymentUpdate.prototype = Object.create(ConfirmationModal.prototype, {
+        constructor: {
+            value: ConfirmationModal
+        },
+        modalTitle: {
+            value: "クレジットカード決済"
+        },
+        getTotalCount: {
+            value: function () {
+                return $('input[data-id]:checked').length;
+            }
+        },
+        getPromises: {
+            value: function (progress) {
+                return $('input[data-id]:checked').map(function () {
+                    var url = '{{ url('admin_order') }}' + '/' + $(this).data('id') + '/sln_pay_command';
+                    var data = {'pay_command': $('#option_bulk_sln_pay_command').val()};
+                    return ConfirmationModal.prototype.getPromises.call(this, progress, url, data);
+                });
+            }
+        }
+    });
+</script>
+<div id="search_box_sln_pay_status" class="row mb-4">
+    <div class="col">
+        <div class="form-row">
+            <div class="col-12">
+                <p class="col-form-label">決済状況</p>
+                <div>
+                    {{ form_widget(searchForm.sln_pay_status, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col"></div>
+</div>
+<div class="form-row mb-2" id="sln_bulk_command">
+    <div class="col btn-bulk-wrapper d-block text-right">
+        <div class="d-inline-block mr-2">
+            <select class="custom-select" id="option_bulk_sln_pay_command">
+                <option value selected>決済変更処理</option>
+                <option value="1">カード決済売上</option>
+                <option value="2">決済取消</option>
+            </select>
+        </div>
+        <button type="button" id="bulk_sln_payment" class="btn btn-ec-regular mr-2"
+            data-type="sln_payment"
+            data-bulk-update="true"
+            data-submit="bulk"
+        >実行</button>
+    </div>
+</div>

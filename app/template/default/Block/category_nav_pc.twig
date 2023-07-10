@@ -1,0 +1,71 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.ec-itemNav__nav
+#}
+{% set Categories = repository('Eccube\\Entity\\Category').getList() %}
+
+{% macro tree(Category) %}
+    {% from _self import tree %}
+    <!--
+    <a href="{{ url('product_list') }}?category_id={{ Category.id }}">
+        {{ Category.name }}
+    </a>
+    -->
+    {% if Category.children|length > 0 %}
+        <ul>
+            {% for ChildCategory in Category.children %}
+                <li>
+                    {{ tree(ChildCategory) }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{# @see https://github.com/bolt/bolt/pull/2388 #}
+{% from _self import tree %}
+
+<div class="ec-categoryNaviRole">
+    <div class="ec-itemNav">
+        <ul class="ec-itemNav__nav">
+    <li>
+        <a href="{{ url('homepage') }}products/list">
+            ガンプラ全て
+        </a>
+    </li>
+    <li>
+        <a href="{{ url('homepage') }}products/list?mode=&category_id=&name=&pageno=&disp_number=0&orderby=0&price_min=&price_max=&class_category_ids=&tag_ids=2_5&search_mode=&member_ids=">
+            HG
+        </a>
+    </li>
+    <li>
+        <a href="{{ url('homepage') }}products/list?mode=&category_id=&name=&pageno=&disp_number=0&orderby=0&price_min=&price_max=&class_category_ids=&tag_ids=2_6&search_mode=&member_ids=">
+            MG
+        </a>
+    </li>
+    <li>
+        <a href="{{ url('homepage') }}products/list?mode=&category_id=&name=&pageno=&disp_number=0&orderby=0&price_min=&price_max=&class_category_ids=&tag_ids=2_8&search_mode=&member_ids=">
+            RG
+        </a>
+    </li>
+    <li>
+        <a href="{{ url('homepage') }}products/list?mode=&category_id=&name=&pageno=&disp_number=0&orderby=0&price_min=&price_max=&class_category_ids=&tag_ids=2_7&search_mode=&member_ids=">
+            PG
+        </a>
+    </li>
+    <li>
+        <a href="{{ url('homepage') }}products/list?mode=&category_id=&name=&pageno=&disp_number=0&orderby=0&price_min=&price_max=&class_category_ids=&tag_ids=2_10%2C2_11&search_mode=&member_ids=">
+            その他
+        </a>
+    </li>
+
+        </ul>
+    </div>
+</div>
+<div>

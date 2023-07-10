@@ -1,0 +1,41 @@
+
+<script>
+    $(function () {
+        $('#search_form>.c-outsideBlock__contents:nth-child(1)>.row').before($('.searchDetail__append'));
+    })
+</script>
+<style>
+    #admin_search_order_Member{
+        display: flex;
+    }
+    #admin_search_order_Member div{
+        margin-right: 10px;
+    }
+</style>
+<div class="searchDetail__append">
+    <div class="row">
+        <div class="col">
+            <label class="col-form-label">配送タイプ</label>
+            <div class="form-row align-items-center">
+                <div class="col">
+                    {{ form_widget(searchForm.DeliveryType) }}
+                    {{ form_errors(searchForm.DeliveryType) }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% if app.user.authority.id==0 %}
+    <div class="row">
+        <div class="col">
+            <label class="col-form-label">メンバー</label>
+            <div class="form-row align-items-center">
+                <div class="col">
+                    {{ form_widget(searchForm.Member) }}
+                    {{ form_errors(searchForm.Member) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+</div>

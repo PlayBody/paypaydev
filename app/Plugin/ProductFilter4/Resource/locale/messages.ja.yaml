@@ -1,0 +1,19 @@
+plg_product_filter4:
+  product_filter:
+    pricing_range_header: 価格
+    pricing_range_value1: 0-500円
+    pricing_range_value2: 500-2000円
+    pricing_range_value3: 2000-6000円
+    pricing_range_value4: 6000-12000円
+    pricing_range_value5: 12000円以上
+    pricing_value_button_label: 検索
+    standard_header: 商品状態
+    member_header: 店舗
+
+  admin:
+    tag_group:
+      nav_title: タググループ
+      page_title: タググループ
+      group_name: グループ名
+      group_list: グループ
+      list_title: メンバー

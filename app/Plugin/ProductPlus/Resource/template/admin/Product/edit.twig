@@ -1,0 +1,147 @@
+{#
+* Plugin Name : ProductPlus
+*
+* Copyright (C) BraTech Co., Ltd. All Rights Reserved.
+* http://www.bratech.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['product', 'productitem'] %}
+{% block title %}{{ 'productplus.admin.nav.product.productitem'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.product.product_management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block main %}
+    <form role="form" class="form-row" name="form1" id="form1" method="post" action="?">
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'productplus.admin.product.productitem.edit.title'|trans }}</span>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#ordererInfo"
+                                       aria-expanded="false" aria-controls="ordererInfo">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body" id="formitem">
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ form.children.name.vars.label }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.name) }}
+                                        {{ form_errors(form.name) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ form.children.input_type.vars.label }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.input_type) }}
+                                        {{ form_errors(form.input_type) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ form.children.is_required.vars.label }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.is_required) }}
+                                        {{ form_errors(form.is_required) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if form.vars['value'].id > 0 %}
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'productplus.admin.product.productitem.edit.form_tag.title'|trans }}</span>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#formInfo"
+                                       aria-expanded="false" aria-controls="formInfo">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="formInfo">
+                            <div class="card-body">
+                            {{ 'productplus.admin.product.productitem.edit.form_tag.label'|trans }}：<br />{{'{{'}} form_label(form.productplus_{{ form.vars['value'].id }}) {{'}}'}}<br />
+                            {{ 'productplus.admin.product.productitem.edit.form_tag.widget'|trans }}：<br />{{'{{'}} form_widget(form.productplus_{{ form.vars['value'].id }}) {{'}}'}}<br />
+                            {{ 'productplus.admin.product.productitem.edit.form_tag.errors'|trans }}：<br />{{'{{'}} form_errors(form.productplus_{{ form.vars['value'].id }}) {{'}}'}}<br />
+                            {{ 'productplus.admin.product.productitem.edit.form_tag.row'|trans }}：<br />{{'{{'}} form_row(form.productplus_{{ form.vars['value'].id }}) {{'}}'}}<br />
+                            </div>
+                        </div>
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'productplus.admin.product.productitem.edit.view_tag.title'|trans }}</span>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#viewInfo"
+                                       aria-expanded="false" aria-controls="viewInfo">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="viewInfo">
+                            <div class="card-body">
+                                {{'{{'}} Product.ViewData({{ form.vars['value'].id }}) {{'}}'}}<br />
+                            {% if form.vars['value'].input_type == constant('Plugin\\ProductPlus\\Entity\\ProductItem::IMAGE_TYPE') %}
+                                <br />
+                                {{ 'productplus.admin.product.productitem.edit.view_tag.example.title'|trans }}<br />
+                                {{ 'productplus.admin.product.productitem.edit.view_tag.example.description'|trans }}<br />
+                                {{'{%'}} for filename in Product.ViewData({{ form.vars['value'].id }}) {{'%}'}}&lt;img src="{{'{{'}} asset(filename, 'save_image') {{'}}'}}"&gt;{{'{%'}} endfor {{'%}'}}<br />
+                            {% elseif form.vars['value'].input_type == constant('Plugin\\ProductPlus\\Entity\\ProductItem::CHECKBOX_TYPE') %}
+                                <br />
+                                {{ 'productplus.admin.product.productitem.edit.view_tag.example.title'|trans }}<br />
+                                {{ 'productplus.admin.product.productitem.edit.view_tag.example.description'|trans }}<br />
+                                {{'{{'}} Product.ViewData({{ form.vars['value'].id }})|join('&lt;br&gt;')|raw {{'}}'}}<br />
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink" href="{{ url('admin_product_productitem') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'productplus.admin.common.back'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">{{ 'productplus.admin.common.save'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

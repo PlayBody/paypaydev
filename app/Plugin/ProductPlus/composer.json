@@ -1,0 +1,1 @@
+{"name":"ec-cube\/ProductPlus","version":"1.1.0","description":"\u5546\u54c1\u8868\u793a\u9805\u76ee\u8ffd\u52a0\u30d7\u30e9\u30b0\u30a4\u30f3","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.6 || ^2.0"},"extra":{"code":"ProductPlus","id":1801}}

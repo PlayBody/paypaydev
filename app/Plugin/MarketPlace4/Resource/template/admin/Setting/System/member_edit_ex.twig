@@ -1,0 +1,37 @@
+{#
+This file is part of the Coupon plugin
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+<script>
+    $(function () {
+        $('#memberInfo>.card-body>div:nth-child(5)').after($('.member_email__append'));
+    })
+</script>
+
+<div class="row mb-2 member_email__append">
+    <div class="col-3">
+        <span>{{ 'admin.setting.system.member.market_place4_email'|trans }}</span>
+        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+    </div>
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                {{- form_widget(form.market_place4_email) -}}
+            </div>
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                {{- form_widget(form.market_place_matome) -}}
+            </div>
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+</div>

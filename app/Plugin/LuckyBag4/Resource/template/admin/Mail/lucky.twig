@@ -1,0 +1,19 @@
+{% autoescape false %}
+    {{ Member }} 様
+
+    次の商品が当たるでした。内容を確認してください。
+
+    ご注文番号：{{ Order.order_no }}
+
+    ************************************************
+    　ご注文商品明細
+    ************************************************
+
+    {% for OrderItem in Order.OrderItems %}
+        {% if OrderItem.isProduct %}
+            福袋商品名 : {{ OrderItem.Product.name }}
+            商品コード：{{ OrderItem.product_code }}
+            商品名：{{ OrderItem.ProductClass.Product.name }}  {{ OrderItem.classcategory_name1 }}  {{ OrderItem.classcategory_name2 }}
+        {% endif %}
+    {% endfor %}
+{% endautoescape %}

@@ -1,0 +1,91 @@
+{% set Members = repository('Eccube\\Entity\\Member').findAll({'Autuority':'asc', 'sort_no':'desc'}) %}
+
+    {% set ii = 0 %}
+    {% for Cart in Carts %}
+        {% set cartKey = Cart.cart_key %}
+        {% set ii = ii + 1  %}
+        <script>
+            $(function() {
+                $('form#form_cart>.ec-cartRole__cart:nth-child({{ (ii-1)*3+1 }})').replaceWith($('#ec-cartRole__cart_market_place4_{{ cartKey }}'));
+
+            });
+        </script>
+
+        <div id="ec-cartRole__cart_market_place4_{{ cartKey }}" class="ec-cartRole__cart">
+            <div class="ec-cartTable">
+                <ol class="ec-cartHeader">
+                    <li class="ec-cartHeader__label">{{ '削除'|trans }}</li>
+                    <li class="ec-cartHeader__label">{{ '商品内容'|trans }}</li>
+                    <li class="ec-cartHeader__label">{{ '数量'|trans }}</li>
+                    <li class="ec-cartHeader__label">{{ '小計'|trans }}</li>
+                </ol>
+                {% for Member in Members %}
+                    {% set amount = 0 %}
+                    {% for CartItem in Cart.CartItems %}
+                        {% set ProductClass = CartItem.ProductClass %}
+                        {% set Product = ProductClass.Product %}
+                        {% if Member == ProductClass.Member %}
+                            {% set amount = amount + CartItem.total_price %}
+                        <ul class="ec-cartRow">
+                            <li class="ec-cartRow__delColumn">
+                                <a href="{{ url('cart_handle_item', {'operation': 'remove', 'productClassId': ProductClass.id }) }}" {{ csrf_token_for_anchor() }} class="ec-icon" data-method="put" data-message="カートから商品を削除してもよろしいですか?">
+                                    <img src="{{ asset('assets/icon/cross.svg') }}" alt="delete">
+                                </a>
+                            </li>
+                            <li class="ec-cartRow__contentColumn">
+                                <div class="ec-cartRow__img">
+                                    <a target="_blank" href="{{ url('product_detail', {id : Product.id} ) }}">
+                                        <img src="{{ asset(Product.MainListImage|no_image_product, 'save_image') }}" alt="{{ Product.name }}"/>
+                                    </a>
+                                </div>
+                                <div class="ec-cartRow__summary">
+                                    <div class="ec-cartRow__name">
+                                        <a target="_blank" href="{{ url('product_detail', {id : Product.id} ) }}">{{ Product.name }}</a>
+                                        {% if ProductClass.ClassCategory1 and ProductClass.ClassCategory1.id %}
+                                            <br>{{ ProductClass.ClassCategory1.ClassName.name }}：{{ ProductClass.ClassCategory1 }}
+                                        {% endif %}
+                                        {% if ProductClass.ClassCategory2 and ProductClass.ClassCategory2.id %}
+                                            <br>{{ ProductClass.ClassCategory2.ClassName.name }}：{{ ProductClass.ClassCategory2 }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="ec-cartRow__unitPrice">{{ CartItem.price|price }}</div>
+                                    <div class="ec-cartRow__sutbtotalSP">{{ '小計：'|trans }}{{ CartItem.total_price|price }}</div>
+                                </div>
+                            </li>
+                            <li class="ec-cartRow__amountColumn">
+                                <div class="ec-cartRow__amount">{{ CartItem.quantity|number_format }}</div>
+                                <div class="ec-cartRow__amountSP">{{ '数量：'|trans }}{{ CartItem.quantity|number_format }}</div>
+                                <div class="ec-cartRow__amountUpDown">
+                                    {% if CartItem.quantity > 1 %}
+                                        <a href="{{ url('cart_handle_item', {'operation': 'down', 'productClassId': ProductClass.id}) }}" {{ csrf_token_for_anchor() }} class="ec-cartRow__amountDownButton load-overlay" data-method="put" data-confirm="false">
+                                            <span class="ec-cartRow__amountDownButton__icon"><img src="{{ asset('assets/icon/minus-dark.svg') }}" alt="reduce"></span>
+                                        </a>
+                                    {% else %}
+                                        <div class="ec-cartRow__amountDownButtonDisabled">
+                                            <span class="ec-cartRow__amountDownButton__icon"><img src="{{ asset('assets/icon/minus.svg') }}" alt="reduce"></span>
+                                        </div>
+                                    {% endif %}
+                                    <a href="{{ url('cart_handle_item', {'operation': 'up', 'productClassId': ProductClass.id}) }}" {{ csrf_token_for_anchor() }} class="ec-cartRow__amountUpButton load-overlay" data-method="put" data-confirm="false">
+                                        <span class="ec-cartRow__amountUpButton__icon"><img src="{{ asset('assets/icon/plus-dark.svg') }}" alt="increase"></span>
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="ec-cartRow__subtotalColumn">
+                                <div class="ec-cartRow__sutbtotal">{{ CartItem.total_price|price }}</div>
+                            </li>
+                        </ul>
+                        {% endif %}
+                    {% endfor %}
+                    {% if (amount>0) %}
+                    <ol style="background-color: #e0e0e0; width: 100%; display:table-row; list-style: none; height: 50px;">
+                        <li style="display: table-cell;"></li>
+                        <li></li>
+                        <li style="display: table-cell;text-align: center;">{{ Member.name }}</li>
+                        <li style="display: table-cell;text-align: right;"> {{ amount|price }}</li>
+                    </ol>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+

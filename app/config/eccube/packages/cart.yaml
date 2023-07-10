@@ -1,0 +1,3 @@
+services:
+    Eccube\Service\Cart\CartItemAllocator:
+        class: Plugin\LuckyBag4\Service\Cart\SaleTypeAndReserveCartAllocator

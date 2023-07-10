@@ -1,0 +1,66 @@
+{#
+* Plugin Name : ProductPlus
+*
+* Copyright (C) BraTech Co., Ltd. All Rights Reserved.
+* http://www.bratech.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+#}
+
+{% for ProductItem in ProductItems %}
+    {% set name = 'productplus_' ~ ProductItem.id %}
+    {% if ProductItem.input_type == constant('Plugin\\ProductPlus\\Entity\\ProductItem::IMAGE_TYPE') %}
+    <div class="row">
+        <div class="col-3">
+            <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
+                <span>{{ form[name].vars.label }}</span>
+                {% if form[name].vars.required %}
+                <span class="badge badge-primary ml-1">
+                    {{ 'admin.common.required'|trans }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div id="progress-productplus-{{ ProductItem.id }}" class="progress" style="display: none;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div id="thumb-productplus-{{ ProductItem.id }}" class="c-form__fileUploadThumbnails clearfix"></div>
+            <p id="message-productplus-{{ ProductItem.id }}"></p>
+            <div id="upload-zone-productplus-{{ ProductItem.id }}" class="media py-5 border-ec-dashed mb-2 rounded">
+                <div class="media-body">
+                    <i class="fa fa-cloud-upload fa-3x text-ec-lightGray mx-3 align-middle" aria-hidden="true"></i>
+                    {{ 'admin.common.drag_and_drop_image_description'|trans }}
+                    {{ form_widget(form[name], { attr : { accept : 'image/*', style : 'display:none;' } }) }}
+                    {{ form_errors(form[name]) }}
+                    <a class="btn btn-ec-regular mr-2" onclick="$('#admin_product_{{ name }}').click()">
+                        {{ 'admin.common.file_select'|trans }}
+                    </a>
+                </div><!-- /.media-body -->
+            </div><!-- /.media -->
+        </div>
+    </div>
+    {% else %}
+    <div class="row" id="detail_box__productplus_{{ ProductItem.id }}">
+        <div class="col-3">
+            <div class="d-inline-block">
+                <span>{{ form[name].vars.label }}</span>
+                {% if form[name].vars.required %}
+                <span class="badge badge-primary ml-1">
+                    {{ 'admin.common.required'|trans }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div>
+                {{ form_widget(form[name]) }}
+                {{ form_errors(form[name]) }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+
+

@@ -1,0 +1,40 @@
+{#
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+<div class="ec-footerRole">
+    <div class="ec-footerRole__inner">
+        <ul class="ec-footerNavi">
+            <li class="ec-footerNavi__link">
+                <a href="https://www.ascente.co.jp/company.html">{{ '会社概要'|trans }}</a>
+            </li>
+            <li class="ec-footerNavi__link">
+                <a href="{{ url('help_privacy') }}">{{ 'プライバシーポリシー'|trans }}</a>
+            </li>
+            <li class="ec-footerNavi__link">
+                <a href="{{ url('help_tradelaw') }}">{{ '特定商取引法に基づく表記'|trans }}</a>
+            </li>
+            <li class="ec-footerNavi__link">
+                <a href="{{ url('contact') }}">{{ 'お問い合わせ'|trans }}</a>
+            </li>
+            <li class="ec-footerNavi__link">
+                <a href="https://ounodoukutsu.jp/zeroshiki/#link05" target="_blank">{{ '王の洞窟 リアルショップ一覧'|trans }}</a>
+            </li>
+            <li class="ec-footerNavi__link">
+                <a href="tel:058-201-3706">{{ 'TEL:058-201-3706'|trans }}</a>
+            </li>
+
+        </ul>
+        <div class="ec-footerTitle">
+            <div class="ec-footerTitle__logo">
+                <a href="{{ url('homepage') }}">{{ BaseInfo.shop_name }}</a>
+            </div>
+            <div class="ec-footerTitle__copyright">copyright (c) {{ BaseInfo.shop_name }} all rights reserved.</div>
+        </div>
+    </div>
+</div>

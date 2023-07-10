@@ -1,0 +1,30 @@
+plg_lucky_bag4:
+
+  admin:
+    product_lucky:
+      product_lucky_info_title: 当選商品情報
+      product_lucky_page_title: 当選商品登録
+
+      product_lucky_list_header_title: 当選商品
+      product_lucky_list_add_btn_label: 1つの商品を追加する
+      product_lucky_list_table_header_product_code: コード
+      product_lucky_list_table_header_lucky_rate: 当選確率
+      product_lucky_list_table_header_add_point: ポイントを追加
+
+      product_lucky_list_format_btn_label: 当選商品の初期化
+      product_lucky_format_confirm_title: 当選商品の初期化
+      go_product_lucky_btn_label: 当選商品を登録
+      go_product_lucky_move_confirm_message: 当選商品登録に移動します。編集内容を保存してから移動しますか？
+      add_lucky_label: 当選商品を追加
+      add_btn_label: 商品追加
+      product_lucky_code_label: 当選商品コード
+      product_lucky_rate_label: 当選確率
+
+  form_error:
+    product_code_error: 登録されていない商品コードです。
+    product_code_admin_error: システム管理者の商品のみ登録可能です。。
+    product_code_lucky_product_error: 福袋商品は登録できません。
+    lucky_rate_max_error: 100以下で入力してください。
+    lucky_rate_stock_error: 商品の在庫がありません。0を入力してください。
+    lucky_rate_sum_error: 当選確率の合計が100になるべきです。
+

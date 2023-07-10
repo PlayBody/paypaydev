@@ -1,0 +1,15 @@
+{% set ii = 0 %}
+{% for orderItemForm in form.OrderItems %}
+    {% set OrderItem = orderItemForm.vars.data %}
+    {% set ii = ii + 1  %}
+    {% if OrderItem.ProductClass %}
+    <script>
+        $(function() {
+            $('#table-form-field>tbody>tr:nth-child({{ ii }})>td:first>span').append($('#market_place4_order_item_member__{{ ii }}'));
+        });
+    </script>
+    <span id="market_place4_order_item_member__{{ ii }}">
+        /{{ OrderItem.ProductClass.Member.name }}
+    </span>
+    {% endif %}
+{% endfor %}

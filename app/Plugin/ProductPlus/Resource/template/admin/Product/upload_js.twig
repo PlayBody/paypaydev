@@ -1,0 +1,134 @@
+{#
+* Plugin Name : ProductPlus
+*
+* Copyright (C) BraTech Co., Ltd. All Rights Reserved.
+* http://www.bratech.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+#}
+
+<script>
+$(function() {
+    var productplus_proto_add = [];
+    var productplus_proto_del = [];
+    var productplus_count_add = [];
+    var proto_img = '<div class="c-form__fileUploadThumbnail" style="background-image:url(\'__path__\');">' +
+        '<a class="delete-image"><i class="fa fa-times" aria-hidden="true"></i></a>' +
+        '</div>';
+    {% for ProductItem in ProductItems %}
+        {% if ProductItem.input_type == constant('Plugin\\ProductPlus\\Entity\\ProductItem::IMAGE_TYPE') %}
+            {% set name = 'productplus_' ~ ProductItem.id %}
+            {% set image_name = 'productplus_' ~ ProductItem.id ~ '_images' %}
+            {% set add_name = 'productplus_' ~ ProductItem.id ~ '_add_images' %}
+            {% set delete_name = 'productplus_' ~ ProductItem.id ~ '_delete_images' %}
+            productplus_proto_add[{{ProductItem.id}}] = '{{ form_widget(form[add_name].vars.prototype) }}';
+            productplus_proto_del[{{ProductItem.id}}] = '{{ form_widget(form[delete_name].vars.prototype) }}';
+            productplus_count_add[{{ProductItem.id}}] = {{ form[add_name]|length|default(0) }};
+            {% for image in form[image_name] %}
+            var $img = $(proto_img.replace(/__path__/g, '{{ asset(image.vars.value, 'save_image') }}'));
+            var $widget = $('{{ form_widget(image) }}');
+            $widget.val('{{ image.vars.value }}');
+            $("#thumb-productplus-{{ ProductItem.id }}").append($img.append($widget));
+            {% endfor %}
+            {% for add_image in form[add_name] %}
+            var $img = $(proto_img.replace(/__path__/g, '{{ asset(add_image.vars.value, 'temp_image') }}'));
+            var $widget = $('{{ form_widget(add_image) }}');
+            $widget.val('{{ add_image.vars.value }}');
+            $("#thumb-productplus-{{ ProductItem.id }}").append($img.append($widget));
+            {% endfor %}
+            {% for delete_image in form[delete_name] %}
+            $("#thumb-productplus-{{ ProductItem.id }}").append('{{ form_widget(delete_image) }}');
+            {% endfor %}
+            $('#file_upload').on('click', function() {
+                $('#{{ form[name].vars.id }}').click();
+            });
+        {% endif %}
+    {% endfor %}
+    $('.productplus_file_upload:file').each(function(){
+        var item_id = $(this).data('item-id');
+        var hideThumbnail = function() {
+            if ($("#thumb-productplus-"+item_id+" div").length > 0) {
+                $("#icon_no_image").css("display", "none");
+                $('#message-productplus-'+item_id).text("{{ 'admin.common.drag_and_drop_description'|trans }}")
+            } else {
+                $("#icon_no_image").css("display", "");
+                $('#message-productplus-'+item_id).empty();
+            }
+        };
+        // Todo: fix update sort by drag&drop
+        var updateSortNo = function() {
+            $("#thumb-productplus-"+item_id+" div").each(function(index) {
+                $(this).find("#productplus_"+item_id+"_sort_no_images").remove();
+                filename = $(this).find("input[type='hidden']").val();
+                $sortNo = $('<input type="hidden" id="productplus_'+item_id+'_sort_no_images" name="productplus_'+item_id+'_sort_no_images[]" />');
+                $sortNo.val(filename + '//' + parseInt(index + 1));
+                $(this).append($sortNo);
+            });
+        };
+        hideThumbnail();
+        updateSortNo();
+        // Delete of images
+        var count_del = 0;
+        $("#thumb-productplus-"+item_id).on("click", '.delete-image', function() {
+            var $new_delete_image = $(productplus_proto_del[item_id].replace(/__name__/g, count_del));
+            var thumbnail = $(this).parents('div.c-form__fileUploadThumbnail');
+            var src = $(thumbnail).find('input').val();
+            $new_delete_image.val(src);
+            $("#thumb-productplus-"+item_id).append($new_delete_image);
+            $(thumbnail).remove();
+            hideThumbnail();
+            updateSortNo();
+            count_del++;
+        });
+
+        $(this).fileupload({
+            url: "{{ url('admin_product_image_add') }}",
+            type: "post",
+            sequentialUploads: true,
+            dataType: 'json',
+            dropZone: $('#upload-zone-productplus-'+item_id),
+            done: function(e, data) {
+                $('#progress-productplus-'+item_id).hide();
+                $.each(data.result.files, function(index, file) {
+                    var path = '{{ asset('', 'temp_image') }}' + file;
+                    var $img = $(proto_img.replace(/__path__/g, path));
+                    var $new_img = $(productplus_proto_add[item_id].replace(/__name__/g, productplus_count_add[item_id]));
+                    $new_img.val(file);
+                    $child = $img.append($new_img);
+                    $("#thumb-productplus-"+item_id).append($child);
+                    productplus_count_add[item_id]++;
+                });
+                hideThumbnail();
+                updateSortNo();
+            },
+            fail: function(e, data) {
+                alert("{{ 'admin.common.upload_error'|trans }}");
+            },
+            always: function(e, data) {
+                $('#progress-productplus-'+item_id).hide();
+                $('#progress-productplus-'+item_id).find('.progress-bar').width('0%');
+            },
+            start: function(e, data) {
+                $('#progress-productplus-'+item_id).show();
+            },
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 10000000,
+            maxNumberOfFiles: 10,
+            progressall: function(e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress-productplus-'+item_id).find('.progress-bar').css(
+                    'width',
+                    progress + '%'
+                );
+            },
+            processalways: function(e, data) {
+                if (data.files.error) {
+                    alert("{{ 'admin.common.upload_error'|trans }}");
+                }
+            }
+        });
+    });
+});
+</script>
+

@@ -1,0 +1,99 @@
+<script>
+
+    var product_ranks = {
+    {% for Product in pagination %}
+        {{ Product.id }} : {{ Product.display_rank }}{% if loop.last == false %},{% endif %}
+    {% endfor %}
+    };
+
+
+    // 並び順
+    var updateRankNumber = function(id, tracking_number, callback) {
+        $.ajax({
+            type: 'PUT',
+            url: '{{ url("product_display_rank4_admin_product_update_rank") }}',
+            data: {'id': id, 'rank': tracking_number}
+        }).done(function(data, textStatus, jqXHR) {
+            if (data['status'] == 'OK') {
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            } else {
+                alert('Update failed.');
+            }
+            return true;
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            var response = JSON.parse(jqXHR.responseText);
+            var messages = '';
+            for (var i = 0; i < response.messages.length; i++) {
+                messages += response.messages[i] + "\n";
+            }
+            alert(messages);
+            return false;
+        });
+    };
+
+
+    $(function () {
+
+        $('#form_bulk thead tr th:last-child').before('<th class="border-top-0 pt-2 pb-2" >表示順<br><a href="{{ url('product_display_rank4_admin_config') }}" target="_blank">設定</th>')
+
+        $('#form_bulk tbody tr[id^=ex-product-]').each(function () {
+            var $tr = $(this)
+            var product_id = $tr.find('[name="ids[]"]').val()
+            var $insert = $('<td>')
+            $insert.append('<div class="input-group input-group-sm"><input class="update_rank_number" style="width: 70px;" type="number" data-product-id="' + product_id + '" value="' + product_ranks[product_id] + '"><span class="input-group-btn">\n' +
+                '<button type="button" data-product-id=' + product_id + ' class="btn btn-default update_rank_button"><i class="fa fa-check fa-lg text-secondary" aria-hidden="true"></i></button></span></div>')
+
+            $tr.find('td').last().before($insert)
+        })
+
+        $('button.update_rank_button').prop('disabled', true);
+        // フォームに変更があったら更新ボタンを有効にする
+        $('input.update_rank_number').on('keyup change', function(event) {
+            var $input = $(this);
+            var $button = $input.closest('.input-group').find('button.update_rank_button');
+            console.log($button)
+            $button.prop('disabled', false);
+            $button.children('i')
+                .removeClass('text-secondary')
+                .addClass('text-success');
+        });
+
+        // enter キーで更新し、次のフォームへフォーカスを移動する
+        $('input.update_rank_number').on('keypress', function(event) {
+            var $input = $(this);
+            var $button = $input.closest('.input-group').find('button.update_rank_button');
+            var display_rank = $input.val();
+            var code = event.which ? event.which : event.keyCode;
+
+            if (code == 13) { // on press to enter
+                var index = $('input.update_rank_number').index(this);
+                var callback = function() {
+                    $button.prop('disabled', true);
+                    $button.children('i')
+                        .removeClass('text-success')
+                        .addClass('text-secondary');
+                    $('input.update_rank_number:gt(' + index + '):first').focus();
+                };
+                updateRankNumber($button.attr('data-product-id'),  display_rank, callback);
+                event.preventDefault();
+            }
+        });
+        // 更新ボタンの制御
+        $('button.update_rank_button').on('click', function(event) {
+            event.preventDefault();
+            var $button = $(this);
+            var $target = $button.closest('.input-group').find('input.update_rank_number');
+            var display_rank = $target.val();
+            var callback = function() {
+                $button.prop('disabled', true);
+                $button.children('i')
+                    .removeClass('text-success')
+                    .addClass('text-secondary');
+            };
+
+            updateRankNumber($button.attr('data-product-id'),  display_rank, callback);
+        });
+    })
+</script>

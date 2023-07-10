@@ -1,0 +1,508 @@
+
+<link rel="stylesheet" href="{{ asset('ProductFilter4/assets/z-input/zInput_default_stylesheet.css', 'plugin') }}">
+<link rel="stylesheet" href="{{ asset('ProductFilter4/assets/JQRangeSlider/classic.css', 'plugin') }}">
+<link rel="stylesheet" href="{{ asset('ProductFilter4/assets/style.css', 'plugin') }}">
+
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jquery-1.12.4.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jquery-ui.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/z-input/zInput.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jQRangeSliderMouseTouch.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jQRangeSliderDraggable.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jQRangeSliderHandle.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jQRangeSliderBar.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jQRangeSliderLabel.js', 'plugin') }}"></script>
+<script src="{{ asset('ProductFilter4/assets/JQRangeSlider/jQRangeSlider.js', 'plugin') }}"></script>
+
+
+
+{% set Config = repository('Plugin\\ProductFilter4\\Entity\\ProductFilter4Config').findOneBy({'id' : 1}) %}
+{% set MaxPrice = 10000 %}
+{% if Config.maxPrice > 0 %}
+    {% set MaxPrice = Config.maxPrice %}
+{% endif %}
+{% set ClassName = repository('Eccube\\Entity\\ClassName').findOneBy({'id' : 1}) %}
+{% set ClassCategorys = repository('Eccube\\Entity\\ClassCategory').findBy({'ClassName' : ClassName}) %}
+{% set Members = repository('Eccube\\Entity\\Member').findAll({'sort_no' : 'DESC'}) %}
+
+{% set str_class_category_ids = '' %}
+{% set str_tag_ids = '' %}
+{% set str_member_ids = '' %}
+{% set price_minValue = 0 %}
+{% set price_maxValue = MaxPrice %}
+{% set search_mode = 0 %}
+
+        {% for item in search_form %}
+            {% if item.vars.id == 'price_min' %}
+                {% if item.vars.value %}
+                    {% set price_minValue = item.vars.value %}
+                {% endif %}
+            {% endif %}
+            {% if item.vars.id == 'price_max' %}
+                {% if item.vars.value %}
+                    {% set price_maxValue = item.vars.value %}
+                {% endif %}
+            {% endif %}
+            {% if item.vars.id == 'class_category_ids' %}
+                {% if item.vars.value %}
+                    {% set str_class_category_ids = item.vars.value %}
+                {% endif %}
+            {% endif %}
+            {% if item.vars.id == 'member_ids' %}
+                {% if item.vars.value %}
+                    {% set str_member_ids = item.vars.value %}
+                {% endif %}
+            {% endif %}
+            {% if item.vars.id == 'tag_ids' %}
+                {% if item.vars.value %}
+                    {% set str_tag_ids = item.vars.value %}
+                {% endif %}
+            {% endif %}
+            {% if item.vars.id == 'search_mode' %}
+                {% if item.vars.value %}
+                    {% set search_mode = item.vars.value %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+
+<script>
+    $(function() {
+        $('.ec-layoutRole__contents .ec-layoutRole__main').before($('#plg_product_filter4-product_filter_left__append'));
+        $('.ec-layoutRole__contents').before($('#plg_product_filter-drawRole_open__append'));
+        $('.plg_product_filter-drawRole_open').on('click', function(){
+            draw_visible();
+        });
+
+        $('.plg_product_filter-drawRole_close').on('click', function(){
+            draw_visible();
+        });
+        $('.plg_product_filter-results_view').on('click', function(){
+            draw_visible();
+        });
+        $('.plg_product_filter-condition_delete').on('click', function(){
+            $('#form1>input#price_min').val('');
+            $('#form1>input#price_max').val('');
+            $('#form1>input#class_category_ids').val('');
+            $('#form1>input#tag_ids').val('');
+            $('.plg_product_filter-drawRole_loading').show();
+            $('#form1').submit();
+        });
+        draw_visible = function(){
+            var search_mode = $('#form1>input#search_mode').val();
+            if (search_mode == 1)
+                search_mode = 0;
+            else
+                search_mode = 1;
+
+            if (search_mode == 1)
+                $('.plg_product_filter-overlayRole').show();
+            else
+                $('.plg_product_filter-overlayRole').hide();
+
+            $('#plg_product_filter__drawRole').slideToggle();
+
+            $('#form1>input#search_mode').val(search_mode);
+
+            $("#slide-sp").rangeSlider('resize');
+        }
+    });
+</script>
+
+<script>
+    //PC check handler & init View
+    $( function(){
+
+        $('#plg_product_filter4-product_filter_left__append .plg_product_filter-standard__section .standard_list input').on('click', function(event) {
+            var class_category_ids = '';
+            $('#plg_product_filter4-product_filter_left__append .plg_product_filter-standard__section .standard_list input').each(function(index) {
+                var checked = $(this).prop('checked');
+                if (checked){
+                    var strid = $(this).attr('id');
+                    var class_category_id = strid.split('__')[1];
+                    if (class_category_ids != '') class_category_ids = class_category_ids + ',';
+                    class_category_ids = class_category_ids + class_category_id;
+                }
+            });
+
+            $('#form1>input#class_category_ids').val(class_category_ids);
+            $('#form1').submit();
+        });
+        $('#plg_product_filter4-product_filter_left__append .plg_product_filter-standard__section input').each(function(index) {
+            var str_class_category_ids = '{{ str_class_category_ids }}';
+            var strid = $(this).attr('id');
+            var class_id = strid.split('__')[1];
+            var classAry = str_class_category_ids.split(',');
+            if (classAry.includes(class_id)>0){
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
+            }
+        });
+
+        $('#plg_product_filter4-product_filter_left__append .plg_product_filter-member__section .member_list input').on('click', function(event) {
+            var member_ids = '';
+            $('#plg_product_filter4-product_filter_left__append .plg_product_filter-member__section .member_list input').each(function(index) {
+                var checked = $(this).prop('checked');
+                if (checked){
+                    var strid = $(this).attr('id');
+                    var member_id = strid.split('__')[1];
+                    if (member_ids != '') member_ids = member_ids + ',';
+                    member_ids = member_ids + member_id;
+                }
+            });
+
+            $('#form1>input#member_ids').val(member_ids);
+            $('#form1').submit();
+        });
+        $('#plg_product_filter4-product_filter_left__append .plg_product_filter-member__section input').each(function(index) {
+            var str_member_ids = '{{ str_member_ids }}';
+            var strid = $(this).attr('id');
+            var member_id = strid.split('__')[1];
+            var memberAry = str_member_ids.split(',');
+            if (memberAry.includes(member_id)>0){
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
+            }
+        });
+
+        $('#plg_product_filter4-product_filter_left__append .plg_product_filter-tag__section input').on('click', function(event) {
+            var tag_ids = '';
+            $('#plg_product_filter4-product_filter_left__append .plg_product_filter-tag__section input').each(function(index) {
+                var checked = $(this).prop('checked');
+                if (checked){
+                    var strid = $(this).attr('id');
+                    var tag_id = strid.split('__')[1];
+                    if (tag_ids != '') tag_ids = tag_ids + ',';
+                    tag_ids = tag_ids + tag_id;
+                }
+            });
+
+            $('#form1>input#tag_ids').val(tag_ids);
+            $('#form1').submit();
+        });
+        $('#plg_product_filter4-product_filter_left__append .plg_product_filter-tag__section input').each(function(index) {
+            var str_tag_ids = '{{ str_tag_ids }}';
+            var strid = $(this).attr('id');
+            var tag_id = strid.split('__')[1];
+            var tagsAry = str_tag_ids.split(',');
+            if (tagsAry.includes(tag_id)>0){
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
+            }
+        });
+
+    });
+</script>
+<script>
+    //sp check handler & init View
+    $( function(){
+        $('#plg_product_filter__drawRole .plg_product_filter-standard__section .zCheckbox').on('click', function(event) {
+            var class_category_ids = '';
+            $('#plg_product_filter__drawRole .plg_product_filter-standard__section .zCheckbox input').each(function(index) {
+                var checked = $(this).prop('checked');
+                if (checked){
+                    var strid = $(this).attr('id');
+                    var class_category_id = strid.split('__')[1];
+                    if (class_category_ids != '') class_category_ids = class_category_ids + ',';
+                    class_category_ids = class_category_ids + class_category_id;
+                }
+            });
+
+            $('#form1>input#class_category_ids').val(class_category_ids);
+            $('.plg_product_filter-drawRole_loading').show();
+
+            $('#form1').submit();
+        });
+        $('#plg_product_filter__drawRole .plg_product_filter-standard__section input').each(function(index) {
+            var str_class_category_ids = '{{ str_class_category_ids }}';
+            var strid = $(this).attr('id');
+            var class_id = strid.split('__')[1];
+            var classAry = str_class_category_ids.split(',');
+            if (classAry.includes(class_id)>0){
+                $(this).parent().parent().parent().addClass('zSelected');
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
+            }
+        });
+
+        $('#plg_product_filter__drawRole .plg_product_filter-member__section .zCheckbox').on('click', function(event) {
+            var member_ids = '';
+            $('#plg_product_filter__drawRole .plg_product_filter-member__section .zCheckbox input').each(function(index) {
+                var checked = $(this).prop('checked');
+                if (checked){
+                    var strid = $(this).attr('id');
+                    var member_id = strid.split('__')[1];
+                    if (member_ids != '') member_ids = member_ids + ',';
+                    member_ids = member_ids + member_id;
+                }
+            });
+
+            $('#form1>input#member_ids').val(member_ids);
+            $('.plg_product_filter-drawRole_loading').show();
+
+            $('#form1').submit();
+        });
+        $('#plg_product_filter__drawRole .plg_product_filter-member__section input').each(function(index) {
+            var str_member_ids = '{{ str_member_ids }}';
+            var strid = $(this).attr('id');
+            var member_id = strid.split('__')[1];
+            var memberAry = str_member_ids.split(',');
+            if (memberAry.includes(member_id)>0){
+                $(this).parent().parent().parent().addClass('zSelected');
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
+            }
+        });
+
+        $('#plg_product_filter__drawRole .plg_product_filter-tag__section .zCheckbox').on('click', function(event) {
+            var tag_ids = '';
+            $('#plg_product_filter__drawRole .plg_product_filter-tag__section .zCheckbox input').each(function(index) {
+                var checked = $(this).prop('checked');
+                if (checked){
+                    var strid = $(this).attr('id');
+                    var tag_id = strid.split('__')[1];
+                    if (tag_ids != '') tag_ids = tag_ids + ',';
+                    tag_ids = tag_ids + tag_id;
+                }
+            });
+
+            $('#form1>input#tag_ids').val(tag_ids);
+            $('.plg_product_filter-drawRole_loading').show();
+
+            $('#form1').submit();
+        });
+        $('#plg_product_filter__drawRole .plg_product_filter-tag__section input').each(function(index) {
+            var str_tag_ids = '{{ str_tag_ids }}';
+            var strid = $(this).attr('id');
+            var tag_id = strid.split('__')[1];
+            var tagsAry = str_tag_ids.split(',');
+            if (tagsAry.includes(tag_id)>0){
+                $(this).parent().parent().parent().addClass('zSelected');
+                $(this).prop('checked', true);
+            }else{
+                $(this).prop('checked', false);
+            }
+        });
+
+    });
+</script>
+
+<div id="plg_product_filter-drawRole_open__append">
+    <a class="plg_product_filter-drawRole_open">絞り込み</a>
+</div>
+<div class="plg_product_filter-overlayRole"></div>
+
+<div id="plg_product_filter4-product_filter_left__append" >
+    <section class="plg_product_filter plg_product_filter-price_range__section">
+        <p>
+            <h3>{{ 'plg_product_filter4.product_filter.pricing_range_header'|trans }}</h3>
+            <input type="text" id="amount" readonly="" style="border:0; color:#353535; font-weight:bold;font-size: 18px;">
+        </p>
+        <div id="slide">
+        </div>
+    </section>
+
+    <section class="plg_product_filter plg_product_filter-standard__section">
+        <h3>{{ 'plg_product_filter4.product_filter.standard_header'|trans }}</h3>
+
+        <div class="standard_list filter_list">
+            <ul>
+                {% for Standard in ClassCategorys %}
+                    <li class="ec-checkbox">
+                        <input type="checkbox" class="form-control" id="chk_standard_check__{{ Standard.id }}" />
+                        <label for="chk_standard_check__{{ Standard.id }}">
+                            {{ Standard.name|trans }}
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+    <section class="plg_product_filter plg_product_filter-tag__section">
+        {% set TagGroups = repository('Plugin\\ProductFilter4\\Entity\\TagGroup').findAll({'sort_no' : 'desc'}) %}
+        {% for TagGroup in TagGroups %}
+
+            <h3>{{ TagGroup.name|trans }}</h3>
+
+            {% set TagGroupsDetails = repository('Plugin\\ProductFilter4\\Entity\\TagGroupDetail').findBy({'TagGroup' : TagGroup}) %}
+            <div class="tag_list filter_list">
+                <ul>
+                    {% for TagGroupsDetail in TagGroupsDetails %}
+                        <li class="ec-checkbox">
+                            <input type="checkbox" class="form-control" id="chk_tag_check__{{ TagGroup.id }}_{{ TagGroupsDetail.Tag.id }}" />
+                            <label title="{{ TagGroupsDetail.Tag.name|trans }}" style="cursor: pointer;" for="chk_tag_check__{{ TagGroup.id }}_{{ TagGroupsDetail.Tag.id }}" >
+                                {% if TagGroupsDetail.Tag.name|length>12 %}
+                                    {{ TagGroupsDetail.Tag.name|slice(0, 10) }}。。。
+                                {% else %}
+                                    {{ TagGroupsDetail.Tag.name|trans }}
+                                {% endif %}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </section>
+    <section class="plg_product_filter plg_product_filter-member__section">
+        <h3>{{ 'plg_product_filter4.product_filter.member_header'|trans }}</h3>
+
+        <div class="member_list filter_list">
+            <ul>
+                {% for Member in Members %}
+                    {% if Member.Work.id == 1 %}
+                    <li class="ec-checkbox">
+                        <input type="checkbox" class="form-control" id="chk_member_check__{{ Member.id }}" />
+                        <label for="chk_member_check__{{ Member.id }}">
+                            {{ Member.name|trans }}
+                        </label>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+</div>
+
+<div id="plg_product_filter__drawRole">
+    <section class="plg_product_filter-sp_header">
+        <a class="plg_product_filter-drawRole_close">閉じる</a>
+    </section>
+    <div class="plg_product_filter-search_area">
+        <section class="plg_product_filter plg_product_filter-price_range__section">
+            <p>
+            <h3>{{ 'plg_product_filter4.product_filter.pricing_range_header'|trans }}</h3>
+            <input type="text" id="amount-sp" readonly="" style="border:0; color:#353535; font-weight:bold;font-size: 18px;">
+            </p>
+            <div id="slide-sp">
+            </div>
+        </section>
+
+        <div id="affect_checkbox">
+            <section class="plg_product_filter plg_product_filter-standard__section">
+                <h3>{{ 'plg_product_filter4.product_filter.standard_header'|trans }}</h3>
+
+                <div id="affect_standard">
+                    {% for Standard in ClassCategorys %}
+                        <input id="chk_standard_check__{{ Standard.id }}" type="checkbox" name="check__{{ Standard.id }}" title="{{ Standard.name|trans }}">
+                    {% endfor %}
+                </div>
+            </section>
+            <section class="plg_product_filter plg_product_filter-tag__section">
+                {% set TagGroups = repository('Plugin\\ProductFilter4\\Entity\\TagGroup').findAll({'sort_no' : 'desc'}) %}
+                {% for TagGroup in TagGroups %}
+
+                    <h3>{{ TagGroup.name|trans }}</h3>
+
+                    {% set TagGroupsDetails = repository('Plugin\\ProductFilter4\\Entity\\TagGroupDetail').findBy({'TagGroup' : TagGroup}) %}
+                    <div id="affect_tag_group_{{ TagGroup.id }}">
+                        {% for TagGroupsDetail in TagGroupsDetails %}
+                            <input id="chk_tag_check__{{ TagGroup.id }}_{{ TagGroupsDetail.Tag.id }}"
+                                   type="checkbox"
+                                   name="check_tag__{{ TagGroup.id }}_{{ TagGroupsDetail.Tag.id }}"
+                                   title="{{ TagGroupsDetail.Tag.name|trans }}" >
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </section>
+            <section class="plg_product_filter plg_product_filter-member__section">
+                <h3>{{ 'plg_product_filter4.product_filter.member_header'|trans }}</h3>
+
+                <div id="affect_standard">
+                    {% for Member in Members %}
+                        {% if Member.Work.id == 1 %}
+                        <input id="chk_member_check__{{ Member.id }}" type="checkbox" name="check_member__{{ Member.id }}" title="{{ Member.name|trans }}">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+    <section class="plg_product_filter-sp_footer">
+        <a class="plg_product_filter-condition_delete">絞り込みを解除</a>
+
+        {% if pagination.totalItemCount > 0 %}
+            <a class="plg_product_filter-results_view">{{ pagination.totalItemCount }}の結果を表示する</a>
+        {% else %}
+            <a class="plg_product_filter-results_view_disabled"  >結果なし</a>
+        {% endif %}
+    </section>
+    <div class="plg_product_filter-drawRole_loading"></div>
+</div>
+
+<script>
+    $("#affect_checkbox").zInput();
+
+    var price_minValue = '{{ price_minValue }}';
+    var price_maxValue = '{{ price_maxValue }}';
+    var max_price = {{ MaxPrice }};
+
+    $("#slide").rangeSlider({
+        valueLabels: 'hide',
+        arrows: false,
+        bounds: {min:0, max:max_price},
+        defaultValues: {min:price_minValue, max:price_maxValue},
+    });
+    $("#slide").bind("valuesChanging", function(e, data){
+        var min_value = Math.floor(data.values.min);
+        var max_value = Math.floor(data.values.max);
+        if (max_value==max_price){
+            $( "#amount" ).val( "￥" + min_value + " ~ ￥" + max_value + '以上');
+        }else{
+            $( "#amount" ).val( "￥" + min_value + " ~ ￥" + max_value );
+        }
+    });
+    $("#slide").bind("userValuesChanged", function(e, data){
+        var min_value = Math.floor(data.values.min);
+        var max_value = Math.floor(data.values.max);
+        $('#form1>input#price_min').val(min_value);
+        $('#form1>input#price_max').val(max_value);
+        $('#form1').submit();
+    });
+    if (price_maxValue==max_price){
+        $( "#amount" ).val( "￥" + price_minValue + " ~ ￥" + price_maxValue + '以上');
+    }else{
+        $( "#amount" ).val( "￥" + price_minValue + " ~ ￥" + price_maxValue );
+    }
+
+    $("#slide-sp").rangeSlider({
+        valueLabels: 'hide',
+        arrows: false,
+        bounds: {min:0, max:max_price},
+        defaultValues: {min:price_minValue, max:price_maxValue},
+    });
+    $("#slide-sp").bind("valuesChanging", function(e, data){
+        var min_value = Math.floor(data.values.min);
+        var max_value = Math.floor(data.values.max);
+        if (max_value==max_price){
+            $( "#amount-sp" ).val( "￥" + min_value + " ~ ￥" + max_value + '以上');
+        }else{
+            $( "#amount-sp" ).val( "￥" + min_value + " ~ ￥" + max_value );
+        }
+    });
+    $("#slide-sp").bind("userValuesChanged", function(e, data){
+        var min_value = Math.floor(data.values.min);
+        var max_value = Math.floor(data.values.max);
+        $('#form1>input#price_min').val(min_value);
+        $('#form1>input#price_max').val(max_value);
+        $('.plg_product_filter-drawRole_loading').show();
+        $('#form1').submit();
+    });
+
+    if (price_maxValue==max_price){
+        $( "#amount-sp" ).val( "￥" + price_minValue + " ~ ￥" + price_maxValue + '以上');
+    }else{
+        $( "#amount-sp" ).val( "￥" + price_minValue + " ~ ￥" + price_maxValue );
+    }
+
+    var search_mode = '{{ search_mode }}'
+    if (search_mode == 1){
+        $('#plg_product_filter__drawRole').show();
+        $('.plg_product_filter-overlayRole').show();
+    }else{
+        $('#plg_product_filter__drawRole').hide();
+    }
+</script>

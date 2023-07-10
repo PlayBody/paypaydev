@@ -1,0 +1,16 @@
+monolog:
+    channels: ['ALIJSettlementIV']
+    handlers:
+        ALIJSettlementIV:
+            type: fingers_crossed
+            action_level: error
+            passthru_level: info
+            handler: ALIJSettlementIV_rotating_file
+            channels: ['ALIJSettlementIV']
+            channels: ['!event', '!doctrine']
+        ALIJSettlementIV_rotating_file:
+            type: rotating_file
+            max_files: 60
+            path: '%kernel.logs_dir%/%kernel.environment%/ALIJSettlementIV.log'
+            formatter: eccube.log.formatter.line
+            level: debug

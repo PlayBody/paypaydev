@@ -1,0 +1,47 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% set Members = repository('Eccube\\Entity\\Member').findAll({'Autuority':'asc', 'sort_no':'desc'}) %}
+
+<script>
+
+   $(function() {
+
+       $('.ec-productRole__price').after($('#product_member_tag__append'));
+       {% if Product.hasProductClass %}
+            $('.ec-productRole__price').after($('#div_market_place4_member_link__append'));
+            $('.ec-productRole__profile form').attr('action', '{{ url('product_ex_add_cart', {id:Product.id}) }}');
+       {% endif %}
+
+   });
+</script>
+
+<div id="div_market_place4_member_link__append" style="border-bottom: 1px dotted #ccc; padding:14px 0; ">
+    <a href="{{ url('product_ex_detail_shop', { id:Product.id } ) }}" id="btnDetailShop"> > こちらからも購入いただけます。</a>
+</div>
+<div id="product_member_tag__append">
+    <ul class="ec-productRole__tags1" style="margin-left: 0;padding-left: 0; padding-top: 10px;">
+        {% for Member in Members %}
+            {% set f = 0 %}
+            {% set ProductClasses = repository('Eccube\\Entity\\ProductClass').findBy({ 'Product':Product, 'Member':Member, 'visible':1 }) %}
+            {% if ProductClasses != null %}
+                {% for pc in ProductClasses %}
+                    {% if pc.stock>0 %}
+                        {% if f == 0 %}
+                            {% set f = 1 %}
+                            <li class="ec-productRole__tag">{{ Member.name }}</li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor%}
+    </ul>
+</div>

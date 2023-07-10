@@ -1,0 +1,11 @@
+services:
+    productplus.api.allow_list:
+        class: ArrayObject
+        tags: ['eccube.api.allow_list']
+        arguments:
+            - #
+                Eccube\Entity\Product: ['ProductDatas']
+                Plugin\ProductPlus\Entity\ProductData: ['id','Details','ProductItem']
+                Plugin\ProductPlus\Entity\ProductDataDetail: ['id','value','num_value','sort_no']
+                Plugin\ProductPlus\Entity\ProductItem: ['id','name','input_type','is_required','sort_no','Options']
+                Plugin\ProductPlus\Entity\ProductItemOption: ['id','text','sort_no']

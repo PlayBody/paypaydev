@@ -1,0 +1,141 @@
+
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['product', 'product_edit'] %}
+
+{% block title %}{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_page_title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.product.product_management'|trans }}{% endblock %}
+
+
+{% block main %}
+<div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
+            <div class="card rounded border-0 mb-4">
+                <div id="ex-product_class-header" class="card-header">
+                    <div class="row">
+                        <div class="col-8">
+                            <span class="card-title align-middle">{{ Product.name }}</span>
+                        </div>
+                        <div class="col-4 text-right">
+                            {# 規格の初期化ボタン #}
+                            <button class="btn btn-ec-delete" type="button"
+                                    data-toggle="modal"
+                                    data-target="#initializationConfirm">{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_format_btn_label'|trans }}
+                            </button>
+                            {# 規格の初期化モーダル #}
+                            <div class="modal fade" id="initializationConfirm" tabindex="-1"
+                                 role="dialog"
+                                 aria-labelledby="deleteConfirm" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title font-weight-bold">{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_format_confirm_title'|trans }}</h5>
+                                            <button class="close" type="button" data-dismiss="modal"
+                                                    aria-label="Close"><span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="text-left">
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-ec-sub" type="button"
+                                                    data-dismiss="modal">
+                                                {{ 'admin.common.cancel'|trans }}
+                                            </button>
+                                            <form method="post"
+                                                  action="{{ url('plg_lucky_bag4_admin_product_lucky_clear', { id: Product.id, return_product_list: return_product_list }) }}">
+                                                {{ form_widget(clearForm._token) }}
+                                                <button class="btn btn-ec-delete" type="submit">
+                                                    {{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_format_btn_label'|trans }}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form method="post" action="{{ url('plg_product_lucky4_admin_product_product_lucky', {'id': Product.id, return_product_list: return_product_list }) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('_token') }}">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-header">
+                        <div class="row justify-content-between">
+                            <div class="col-6">
+                                <span class="align-middle">
+                                    {{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_header_title'|trans }}
+                                    {{ form_errors(form) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="ex-product_class" class="card-body p-0">
+                        <table class="table table-sm">
+                            <thead>
+                                <th class="pt-2 pb-2 pl-3" width="5%">
+                                </th>
+                                <th class="pt-2 pb-2" width="30%">{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_table_header_product_code'|trans }}</th>
+                                <th class="pt-2 pb-2" width="10%">{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_table_header_add_point'|trans }}</th>
+                                <th class="pt-2 pb-2" width="20%">{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_table_header_lucky_rate'|trans }}(%)</th>
+                                <th class="pt-2 pb-2"></th>
+                             </thead>
+                            {% for form_lucky in form.product_luckies %}
+                                <tr>
+                                    <td class="align-middle pl-3">
+                                        {{ form_widget(form_lucky.checked) }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ form_widget(form_lucky.product_code) }}
+                                        {{ form_errors(form_lucky.product_code) }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ form_widget(form_lucky.add_point) }}
+                                        {{ form_errors(form_lucky.add_point) }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ form_widget(form_lucky.lucky_rate) }}
+                                        {{ form_errors(form_lucky.lucky_rate) }}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+                <div class="c-conversionArea">
+                    <div class="c-conversionArea__container">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-6">
+                                <div class="c-conversionArea__leftBlockItem">
+                                    {% if return_product_list %}
+                                        <a class="c-baseLink" href="{{ url('admin_product', {'resume': 1}) }}">
+                                            <i class="fa fa-backward" aria-hidden="true"></i>
+                                            <span>{{ 'admin.product.product_list'|trans }}</span>
+                                        </a>
+                                    {% else %}
+                                        <a class="c-baseLink" href="{{ url('admin_product_product_edit', {'id': Product.id}) }}">
+                                            <i class="fa fa-backward" aria-hidden="true"></i>
+                                            <span>{{ 'admin.product.product_registration'|trans }}</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                                    <div class="col-auto">
+                                        <button class="btn btn-ec-conversion px-5" name="{{ form.save.vars.full_name }}" type="submit">
+                                            {{ 'admin.common.registration'|trans }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

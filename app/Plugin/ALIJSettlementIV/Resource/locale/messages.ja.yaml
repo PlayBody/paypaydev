@@ -1,0 +1,23 @@
+# flash messages
+ALIJ.admin.save.success: 登録しました。
+ALIJ.admin.save.failed: 登録に失敗しました。
+
+# twig
+ALIJ.admin.config.title: アナザーレーン決済
+ALIJ.admin.config.sub_title: プラグイン一覧
+ALIJ.admin.config.header: 設定
+ALIJ.admin.config.save: 登録
+ALIJ.admin.config.required: 必須
+ALIJ.admin.config.back: プラグイン一覧
+ALIJ.admin.config.siteId: サイトID
+ALIJ.admin.config.sitePassword: サイトパスワード
+ALIJ.admin.config.serverIP: サーバーIP
+ALIJ.admin.config.IPInfo: (※チェックを行わない場合は、0.0.0.0で設定してください。)
+ALIJ.admin.config.useCont: 継続決済を使用する
+ALIJ.admin.config.useQuick: クイックチャージを使用する
+ALIJ.admin.config.useInfo: (※継続決済・クイックチャージをご希望の際は弊社までご連絡ください。)
+ALIJ.admin.config.useAmountCheck: 金額チェックを使用する
+ALIJ.admin.config.useTest: テスト環境を使用する
+ALIJ.admin.product_class.alij_cont_enable: 継続有効
+ALIJ.admin.product_class.alij_cont_times: 継続回数
+ALIJ.admin.product_class.alij_cont_amount2: 継続次回金額

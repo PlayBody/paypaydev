@@ -1,0 +1,7 @@
+<script>
+    {% if useCont == false %}
+        $("input[id*='alij_cont']").each(function () {
+            $(this).parents(".row:first").remove();
+        })
+    {% endif %}
+</script>

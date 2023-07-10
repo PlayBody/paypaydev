@@ -1,0 +1,15 @@
+<script>
+    {% if useCont == false %}
+        $("input[id*='alij_cont']").each(function () {
+            $(this).parents(".align-middle.pr-3:first").remove();
+        })
+
+        $("th[class='pt-2 pb-2']").each(function () {
+            var alijText = $(this).text();
+            if(alijText === "継続有効" || alijText === "継続回数" || alijText === "継続次回金額")
+            {
+                $(this).remove();
+            }
+        })
+    {% endif %}
+</script>

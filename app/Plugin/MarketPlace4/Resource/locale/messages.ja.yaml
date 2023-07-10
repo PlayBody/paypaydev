@@ -1,0 +1,8 @@
+admin.setting.system.member.market_place4_email: メールアドレス
+admin.setting.system.member.market_place4_matome: おまとめ対象
+product.detail.class.label: メールアドレス
+
+market_place.admin.product.class_edit_permission_error: データを登録することができません。
+
+market_place4.admin.product_stock_csv_inout.title: 在庫データCSV入出力
+market_place4.admin.product_stock_csv_inout.sub_title: 商品管理

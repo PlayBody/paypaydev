@@ -1,0 +1,26 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+<table class="table table-striped">
+    <thead class="table-active">
+    <tr>
+        <th class="pt-2 pb-2 pl-2">{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_table_header_product_code'|trans }}</th>
+        <th class="pt-2 pb-2 pl-2">{{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_list_table_header_lucky_rate'|trans }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for ProductLucky in ProductLuckies %}
+        <tr>
+            <td>{{ ProductLucky.productCode }}</td>
+            <td>{{ ProductLucky.luckyRate }}%</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

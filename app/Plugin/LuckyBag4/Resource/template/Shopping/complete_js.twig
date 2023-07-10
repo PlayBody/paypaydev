@@ -1,0 +1,105 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% set Config = repository('Plugin\\LuckyBag4\\Entity\\LuckyBag4Config').findOneBy({'id' : 1}) %}
+
+ <script>
+    var lucky_type = '{{ Config.SaleType.id }}';
+    var sale_type='{{ Order.LuckyBag4SaleType }}';
+    var is_lucky = (lucky_type == sale_type);
+    $(function() {
+        // if (is_lucky){
+        //     $('.ec-cartCompleteRole').after($('#plg_lucky_bag4-select_product__append'));
+        //     $('.ec-off4Grid__cell>a').hide();
+        // }
+
+        $('.renderLink').on('click', function(){
+            $(this).replaceWith($('#loading_gif'));
+            $('#loading_gif').show();
+
+
+            $(this).find('.renderGif').css('background-image', 'url({{ asset('LuckyBag4/assets/img/load_product.gif', 'plugin') }})');
+            var strId = $(this).attr('id');
+            var id = strId.split('_')[1];
+
+            $.ajax({
+                url: '{{ url('lucky_bag4_shopping_complete_select_product') }}',
+                cache: false,
+                data: {'id' : id}
+            }).done(function(data, textStatus, jqXHR) {
+                // レスポンス内のメッセージをalertで表示
+                var current = new Date().getTime()+2000;
+                while(new Date().getTime()<current){
+
+                }
+
+                $('#plg_lucky_bag4-select_product__append').html(data);
+                $('#plg_lucky_bag4-select_product__append>div').hide();
+
+                $('#plg_lucky_bag4-select_product__append>div').each(function (index) {
+                    $(this).fadeOut({'start':function() {$(this).css('transform','scale(4)') },'duration':1});
+                    $(this).delay((index) * 800 + 200).fadeIn({'start':function() {$(this).css('transform','scale(1)') },'duration':300});
+                })
+
+                $('.ec-off4Grid__cell>a').delay(2000).slideToggle();
+
+            }).fail(function(data) {
+                alert('{{ '失敗しました。'|trans }}');
+            }).always(function(data) {
+                // Buttonを有効にする
+            });
+
+        })
+
+    });
+
+</script>
+{% block stylesheet %}
+<style>
+    #loading_gif, .renderLink{
+        width: 300px;
+        height: 300px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: none;
+    }
+    .renderLink{
+        cursor: pointer;
+    }
+    .renderLink:hover{
+        opacity: 0.8;
+    }
+    #plg_lucky_bag4-select_product__append>div{
+        margin-left: auto;
+        margin-right: auto;
+        margin-top:30px;
+        transition:0.5s all;
+    }
+</style>
+{% endblock %}
+<div id="plg_lucky_bag4-select_product__append" style="display: flex; flex-wrap: wrap; ">
+    <div class="renderLink" id="order_{{ Order.id }}" style="background-image: url({{ asset('LuckyBag4/assets/img/prepare_product.gif', 'plugin') }}); display: block;">
+    </div>
+</div>
+<div id="loading_gif" style="background-image: url({{ asset('LuckyBag4/assets/img/load_product.gif', 'plugin') }}); margin-left: auto;margin-right: auto;">
+
+</div>
+<script>
+    if (is_lucky){
+        $('.ec-cartCompleteRole').after($('#plg_lucky_bag4-select_product__append'));
+        $('.ec-off4Grid__cell>a').hide();
+    }else{
+        $('#plg_lucky_bag4-select_product__append').hide();
+    }
+</script>
+
+

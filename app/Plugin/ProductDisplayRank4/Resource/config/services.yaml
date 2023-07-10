@@ -1,0 +1,6 @@
+services:
+  Plugin\ProductDisplayRank4\EventSubscriber\ProductEventSubscriber:
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - { name: 'doctrine.event_subscriber' }

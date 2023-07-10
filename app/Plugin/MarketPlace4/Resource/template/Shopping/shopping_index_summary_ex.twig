@@ -1,0 +1,90 @@
+<script>
+	function loadFeeAmount(){
+		$('.ec-orderRole__summary .ec-totalBox>.add_fee_replace').replaceWith($('#div_add_delivery'));
+	}
+	
+	
+</script>
+<div id="div_add_delivery">
+<dl class="ec-totalBox__spec">
+	<dt>{{ '送料'|trans }}</dt>
+	<dd>{{ deliveryFee|price }}</dd>
+</dl>
+{% if (addFee>0) %}
+<dl class="ec-totalBox__spec" >
+	<dt><b>{{ '追加送料（※一部地域のみ）'|trans }}</b></dt>
+	<dd>{{ addFee|price }}</dd>
+</dl>
+{% endif %}
+</div>
+
+
+<style>
+    table#shopping_summary th, table#shopping_summary td{
+        padding:5px 3px;
+    }
+    table#shopping_summary tr{
+        border-bottom: dotted #2b669a 1px;
+    }
+</style>
+{% for sum in sums %}
+    <div style="padding-top:5px; padding-bottom: 5px;">{{ sum['ship'] }}</div>
+    <table id="shopping_summary" width="100%" cellpadding="3px" style="margin-bottom: 10px;">
+        <tr style="background-color: #d1d1d1;padding-top:3px; padding-bottom: 2px; border-bottom: solid #2b669a 1px;">
+            <th style="text-align: center;" width="40%">店舗</th>
+            <th style="text-align: center;" width="30%">合計</th>
+            <th style="text-align: center;">送料</th>
+        </tr>
+        {% if sum['deliveryType'] == 1 %}
+            {% set merge=0 %}
+            {% for member in sum['members'] %}
+                {% if member['member'].market_place_matome == 1 %}
+                <tr>
+                    <td align="center">{{ member['member'].name }}</td>
+                    <td align="right">{{ member['sum']|price }}</td>
+                    {% if merge==0 %}
+                        {% set merge = 1 %}
+                        <td align="right" rowspan="{{ sum['matome_count'] }}">{% if sum['matome_amount']<5000 %}{{ member['deliveryFee']|price }}{% else %}{{ member['deliveryFreeFee']|price }}{% endif %}</td>
+                    {% endif %}
+                </tr>
+                {% endif %}
+            {% endfor %}
+            {% for member in sum['members'] %}
+                {% if member['member'].market_place_matome != 1 %}
+                    <tr>
+                        <td align="center">{{ member['member'].name }}</td>
+                        <td align="right">{{ member['sum']|price }}</td>
+                        <td align="right">{% if member['sum']<5000  %}{{ member['deliveryFee']|price }}{% else %}{{ member['deliveryFreeFee']|price }}{% endif %}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if sum['deliveryType'] == 2 %}
+            {% for member in sum['members'] %}
+                {% if member['member'].maketPlaceMatome != 1 %}
+                    <tr>
+                        <td align="center">{{ member['member'].name }}</td>
+                        <td align="right">{{ member['sum']|price }}</td>
+                        <td align="right">{% if member['sum']<5000  %}{{ member['deliveryFee']|price }}{% else %}{{ member['deliveryFreeFee']|price }}{% endif %}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <tr style="border-bottom: none;">
+            <td align="center">合計</td>
+            <td align="right">{{ sum['ship_amount']|price }}</td>
+            <td align="right">{{ sum['ship_delivery_amount']|price }}</td>
+        </tr>
+    </table>
+	
+    {% set idx = loop.index0 %}
+	<script>
+		var ii = '{{ idx }}';
+		if ($('#shopping_order_Shippings_'+ii+'_DeliveryType_1').attr('checked')==undefined && $('#shopping_order_Shippings_'+ii+'_DeliveryType_2').attr('checked')==undefined){
+			$('#shopping_order_Shippings_'+ii+'_DeliveryType_2').attr('checked', true);
+		}
+	</script>
+
+{% endfor %}
+

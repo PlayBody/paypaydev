@@ -1,0 +1,15 @@
+<table>
+    <tr>
+        <th id="plugin_emailex_member_index_title" class="border-top-0 pt-2 pb-2 text-center">{{ 'admin.setting.system.member.market_place4_email'|trans }}</th>
+        <th id="plugin_matomeex_member_index_title" class="border-top-0 pt-2 pb-2 text-center">{{ 'admin.setting.system.member.market_place4_matome'|trans }}</th>
+        {% for Member in Members %}
+            <td id="plugin_emailex_member_index_list_{{ Member.id }}" class="align-middle text-center">
+                {{ Member.market_place4_email }}
+            </td>
+            <td id="plugin_matomeex_member_index_list_{{ Member.id }}" class="align-middle text-center">
+                <input type="checkbox" {% if Member.market_place_matome %} checked {% endif %} />
+            </td>
+        {% endfor %}
+    </tr>
+</table>
+

@@ -1,0 +1,67 @@
+productplus.admin.nav.product.productitem: 商品項目管理
+productplus.admin.nav.product.productitem.option: 選択肢編集
+
+productplus.admin.common.new: 新規登録
+productplus.admin.common.save: この内容で登録
+productplus.admin.common.back: 一覧に戻る
+productplus.admin.common.up: 上へ移動
+productplus.admin.common.down: 下へ移動
+productplus.admin.product.productitem.list: 項目一覧
+productplus.admin.product.productitem.edit: 商品項目を編集
+productplus.admin.product.productitem.no_item: 商品項目がありません。
+productplus.admin.product.productitem.edit.title: 商品項目編集
+productplus.admin.product.productitem.option.no_item: 選択肢がありません。
+productplus.admin.product.productitem.option.sortable: 選択肢の順番はドラッグ＆ドロップでも変更可能です。
+productplus.admin.product.productitem.option.edit: 選択肢を編集
+productplus.admin.product.productitem.edit.form_tag.title: フォームタグ
+productplus.admin.product.productitem.edit.form_tag.label: ラベル
+productplus.admin.product.productitem.edit.form_tag.widget: 入力フォーム
+productplus.admin.product.productitem.edit.form_tag.errors: エラー表示
+productplus.admin.product.productitem.edit.form_tag.row: ラベル+入力
+productplus.admin.product.productitem.edit.view_tag.title: 表示タグ
+productplus.admin.product.productitem.edit.view_tag.example.title: 【使用例】
+productplus.admin.product.productitem.edit.view_tag.example.description: 出力値が配列となりますので、表示の際は配列処理を行ってください。
+productplus.admin.product.product_plus__card_title: 追加項目
+
+# form
+productplus.form.productitem.label.name: 項目名
+productplus.form.productitem.label.input_type: フォームタイプ
+productplus.form.productitem.label.is_required: 必須チェック
+productplus.form.productitem.label.is_required_short: 必須
+productplus.form.productitem.choice.empty: 選択してください
+productplus.form.productitem.choice.text: テキストボックス
+productplus.form.productitem.choice.textarea: テキストエリア
+productplus.form.productitem.choice.select: プルダウン
+productplus.form.productitem.choice.radio: ラジオボタン
+productplus.form.productitem.choice.checkbox: チェックボックス
+productplus.form.productitem.choice.image: 画像
+productplus.form.productitem.choice.date: 日付
+productplus.form.productitem.option.label.text: 選択肢名
+
+productplus.csv.common.name: (名称)
+productplus.csv.common.id: (ID)
+productplus.admin.product.product_csv.product_plus.id_description: 0以上の数値を設定。複数設定する場合は「,」区切りで入力（チェックボックスタイプの場合）
+productplus.admin.product.product_csv.product_plus.image_description: 画像名を「,」区切りで入力、画像は別途FTP等で該当ディレクトリに設置してください。
+productplus.admin.product.product_csv.not_correct: '%line%行目の%name%が正しく入力されていません。'
+
+# modal
+productplus.admin.product.productitem.modal.header: 商品項目を削除します。
+productplus.admin.product.productitem.modal.body: 商品項目は一覧（マスター）から削除されます。この操作はあとから取り消すことができません。この商品項目を削除しますか？
+productplus.admin.product.productitem.option.modal.header: 選択肢を削除します。
+productplus.admin.product.productitem.option.modal.body: 選択肢は一覧（マスター）から削除されますが、この操作はあとから取り消すことができません。この選択肢を削除しますか？
+
+productplus.productitem.error.image.required: 画像が登録されていません。
+productplus.type.image.path.error: 画像のパスが不正です。
+
+admin.product.productitem.delete.complete: 商品項目の削除が完了しました。
+admin.product.productitem.delete.error: 商品項目の削除できませんでした。
+admin.product.productitem.save.complete: 商品項目を登録しました。
+admin.product.productitem.save.error: 商品項目を登録できませんでした。
+admin.product.productitem.option.save.complete: 選択肢を登録しました。
+admin.product.productitem.option.save.error: 選択肢を登録できませんでした。
+admin.product.productitem.option.up.complete: 選択肢を上へ移動しました。
+admin.product.productitem.option.up.error: 選択肢を上へ移動できませんでした。
+admin.product.productitem.option.down.complete: 選択肢を下へ移動しました。
+admin.product.productitem.option.down.error: 選択肢を下へ移動できませんでした。
+admin.product.productitem.option.delete.complete: 選択肢を削除しました。
+admin.product.productitem.option.delete.error: 選択肢を削除できませんでした。

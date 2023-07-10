@@ -1,0 +1,130 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% block main %}
+    <div class="ec-role">
+        <div class="ec-pageHeader">
+            <h1>{{ 'お買い物ガイド'|trans }}</h1>
+            <li><a href="./guide#businessday">営業日について</a></li>
+            <li><a href="./guide#shippingfee">送料について</a></li>
+            <li><a href="./guide#shipping">配送について</a></li>
+            <li><a href="./guide#payment">ご購入・お支払いについて</a></li>
+            <li><a href="./guide#condition">中古商品の状態について</a></li>
+            <li><a href="./guide#packing">梱包について</a></li>
+            <li><a href="./guide#return">返品・交換について</a></li>
+            <li><a href="./guide#confirmation">確認メールが届かないとき</a></li>
+            <h2 id="businessday">営業日について</h2>
+            <p>
+                【王の洞窟 岐南本店】月～土曜日営業、日曜日は休業<br>
+                <br>
+                ※休業日はお電話でのお問い合わせのご対応、発送業務は行っておりません。<br>
+                ※メールでのお問い合わせのご返答は翌営業日となります。<br>
+            </p>
+            <h2 id="shippingfee">送料について</h2>
+            <br>
+            <br>
+            <p>
+                【おまとめ便】の場合<br>
+                一度に5000円以上ご購入いただきますと、送料無料となります。<br>
+                <br>
+                【お急ぎ便】の場合<br>
+                店舗ごとの合計額5000円以上ご購入いただきますと、5000円を超えた店舗は送料無料となります。<br>
+                <br>
+                【別途送料】<br>
+                北海道、沖縄への発送は上記で基本送料が無料となる場合でも、別途追加送料がかかります。<br> 
+            </p>
+            <h2 id="shipping">配送について</h2>
+            <p>
+                ヤマト運輸で発送いたします。<br>
+                <br>
+                【おまとめ便】の場合<br>
+                ご入金確認後1～7日で発送いたします。<br>
+                <br>
+                【お急ぎ便】の場合<br>
+                商品は1～3営業日以内に発送いたします。<br>
+            </p>
+            <h2 id="payment">ご購入・お支払いについて</h2>
+            <p>
+                クレジットカード決済、銀行振り込み、AmazonPayがご利用いただけます。<br>
+                店舗併売につき売り切れ商品があった場合、以下の対応をさせていただきます。<br>
+                ・クレジットカード決済は速やかに対象商品をキャンセルとさせて頂きます。キャンセル商品の支払いは発生いたしません。<br>
+                ・店舗ごと合計額5000円以上で送料無料が、当店キャンセルにより送料が発生した場合は当店負担で発送いたします。<br>
+                ・銀行振り込みは対象商品をキャンセルさせていただきます。<br>
+                ・AmazonPayは速やかに対象商品をキャンセルとさせて頂きます。キャンセル商品の支払いは発生いたしません。<br/>
+            </p>
+            <br>
+            <h2 id="condition">中古商品の状態について</h2>
+    
+                <h3>中古－良品</h3>
+    
+                <p>
+                    当店では下記状態の商品を【中古-良品】として扱っております。
+                </p>
+    
+                <li>
+                    価格ラベル、商品タグ、防犯タグ等のパッケージに貼り付け
+                </li>
+    
+                <img src="/shop_gunpla/html/user_data/assets/img/seal.jpg" style="width:300px">
+    
+                <li>
+                    軽度のパッケージの擦れ、凹みなど
+                </li>
+    
+                <img src="/shop_gunpla/html/user_data/assets/img/scrub.jpg" style="width:300px">
+                <img src="/shop_gunpla/html/user_data/assets/img/dent.jpg" style="width:300px">
+            
+                <p>
+                    店頭販売時に商品にプラスチック製のバンドをかける場合があり、バンドによる凹みがある場合がございます。
+                    そちらも上記同様【中古-良品】として扱っております。
+                </p>
+    
+                <h3>中古-可</h3>
+    
+                <p>
+                    【中古-良品】の項に掲載されている写真よりも重度の痛み・擦れ等がある場合は【中古-可】として扱っております。
+                </p>
+    
+                <h3>中古-訳あり</h3>
+    
+                <p>
+                    箱の欠品などです。詳細は個別にお問い合わせください。
+                </p>
+                <br>
+            <h2 id="packing">梱包について</h2>
+                <p>無地の段ボール、緩衝材はボーガス紙を利用して梱包いたします。品名は「プラモデル」と記載いたします。</p>
+                <br>
+            <h2 id="return">返品・交換について</h2>
+                <p>配送事故と思われる不良品、商品違い、数量不足等があった場合<br>
+                    商品到着後７日以内に「お問い合わせ」よりご連絡ください。<br>
+                    状態を確認させていただいた後、速やかに交換／補填等の対応をさせていただきます。（送料・手数料当店負担）<br>
+                </p>
+                <p>
+                    ※お客様都合による返品交換はお受けできません
+                </p>
+                <p>
+                    製造時の初期不良品<br>
+                    パッケージ内の破損、部品不足等の初期商品不良につきましては、お手数ですはございますが商品パッケージ記載のメーカー窓口までご連絡ください。
+                </p>
+                <br>
+            <h2 id="confirmation">確認メールが届かないとき</h2> 
+                <p>
+                    王の洞窟ではお申し込み後、すぐに確認のメールを差し上げております。
+                    メールアドレスにお間違いがないにも関わらずメールが届かない場合、
+                    王の洞窟からのメールが迷惑メールとして認識されている場合がございます。
+                    お手数ですが、迷惑メールフォルダをご確認頂くかお電話にてお問い合せ頂けますと幸いです。
+                    電話番号　0120-945-626（受付時間10:00～18:00)
+                    なお、メールのブロック設定解除につきましては <a href="https://www.ounodoukutsu.jp/g_pla/tomail.html" target="_blank">こちらのページ</a >をご参照下さい。をご参照下さい。
+                </p>
+        </div>
+    </div>
+{% endblock %}

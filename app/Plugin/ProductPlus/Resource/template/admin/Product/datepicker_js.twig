@@ -1,0 +1,48 @@
+{#
+* Plugin Name : ProductPlus
+*
+* Copyright (C) BraTech Co., Ltd. All Rights Reserved.
+* http://www.bratech.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+#}
+
+<link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
+<style type="text/css">
+    .datepicker-days th.dow:first-child,
+    .datepicker-days td:first-child {
+        color: #f00;
+    }
+
+    .datepicker-days th.dow:last-child,
+    .datepicker-days td:last-child {
+        color: #00f;
+    }
+</style>
+<script>
+$(function() {
+    if ($('[type="date"]').prop('type') != 'date' && $('[type="date"]').prop('name').match(/productplus_/) != null) {
+        // input type属性でdateが利用できるかどうか(カレンダー表示できないブラウザ対応)
+        $.when(
+            $.getScript("{{ asset('assets/js/vendor/moment.min.js', 'admin') }}"),
+            $.getScript("{{ asset('assets/js/vendor/moment-with-locales.min.js', 'admin') }}"),
+            $.getScript("{{ asset('assets/js/vendor/tempusdominus-bootstrap-4.min.js', 'admin') }}")
+        ).done(function() {
+            $('input[type=date]').each(function(){
+                if($(this).prop('name').match(/productplus_/) != null){
+                    $(this).datetimepicker({
+                        locale: '{{ eccube_config.locale }}',
+                        format: 'YYYY-MM-DD',
+                        useCurrent: false,
+                        buttons: {
+                            showToday: true,
+                            showClose: true
+                        }
+                    });
+                }
+            });
+        });
+    }
+});
+</script>

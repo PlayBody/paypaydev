@@ -1,0 +1,53 @@
+<script>
+    $(function () {
+        $('.ec-orderConfirm>.ec-input').before($('.mareket_place4-orderConfirm_append'));
+
+        $.ajax({
+            url: "{{ url('shopping_summary_market_place4_ex') }}",
+            cache: false,
+            data: {
+                'id' : {{ Order.id }}
+            },
+        }).done(function(data, textStatus, jqXHR){
+            $('#market_place4_shopping_summary__append').html(data);
+            $('.ec-orderRole__summary .ec-totalBox>.ec-totalBox__spec:nth-child(1)').before($('#market_place4_shopping_summary__append'));
+			
+			loadFeeAmount();
+			
+        }).fail(function(data, textStatus, errorThrown){
+            $('.div_classEx__append').html('取得に失敗しました。');
+        });
+    })
+
+</script>
+
+
+
+
+
+{% for shipping in Order.shippings %}
+    {% set idx = loop.index0 %}
+
+<script>
+    $(function () {
+        console.log($('#shopping_order_Shippings_{{ idx }}_Delivery').parent('.ec-selects'));
+        console.log($('#shopping_order_Shippings_{{ idx }}_Delivery').parent().parent());
+        $('#shopping_order_Shippings_{{ idx }}_Delivery').parent().parent().append($('#market_place4_order_type__append_{{ idx }}'));
+    })
+</script>
+
+<div class="ec-radio" id="market_place4_order_type__append_{{ idx }}">
+    <label>{{ '注文方法'|trans }}</label>
+    {{ form_widget(form.Shippings[idx].DeliveryType, {'attr': { 'data-trigger': 'change'}}) }}
+    {{ form_errors(form.Shippings[idx].DeliveryType) }}
+</div>
+{% endfor %}
+
+<div id="market_place4_shopping_summary__append">
+
+</div>
+
+<div class="mareket_place4-orderConfirm_append ec-input" style="margin-bottom: 10px;">
+    {{ form_widget(form.MessageMember, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.MessageMember) }}
+</div>

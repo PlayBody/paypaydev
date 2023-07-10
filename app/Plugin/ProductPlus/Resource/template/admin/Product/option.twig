@@ -1,0 +1,258 @@
+{#
+* Plugin Name : ProductPlus
+*
+* Copyright (C) BraTech Co., Ltd. All Rights Reserved.
+* http://www.bratech.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['product', 'productitem'] %}
+{% block title %}{{ 'productplus.admin.nav.product.productitem.option'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.product.product_management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<style type="text/css">
+    .list-group-item:hover {
+        z-index: inherit;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.widget.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js', 'admin') }}"></script>
+    <script>var bootstrapTooltip = $.fn.tooltip.noConflict();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    $(function() {
+        var oldSortNos = [];
+        // 画面の中のsortNo一覧を保持
+        $('.sortable-item').each(function() {
+            oldSortNos.push(this.dataset.sortNo);
+        });
+        // rsort
+        oldSortNos.sort(function(a, b) {
+            return a - b;
+        }).reverse();
+
+        $('.sortable-container').sortable({
+            items: '> .sortable-item',
+            cursor: 'move',
+            update: function(e, ui) {
+                $('body').append($('<div class="modal-backdrop show"></div>'));
+                updateSortNo();
+            }
+        });
+
+        var updateSortNo = function() {
+            // 並び替え後にsortNoを更新
+            var newSortNos = {};
+            var i = 0;
+            $('.sortable-item').each(function() {
+                newSortNos[this.dataset.optionId] = oldSortNos[i];
+                i++;
+            });
+
+            $.ajax({
+                url: '{{ url('admin_product_productitem_option_sort_no_move') }}',
+                type: 'POST',
+                headers: {
+                    'x-csrf-token': $('meta[name="x-csrf-token"]').attr('content')
+                },
+                data: newSortNos
+            }).done(function() {
+                // remove class disable
+                $('a.up.disabled').removeClass('disabled');
+                $('a.down.disabled').removeClass('disabled');
+                // First element
+                $('.sortable-item > li:nth-child(2) > div > div.col-auto.text-right > a.up').addClass('disabled');
+            }).always(function() {
+                redrawDisableAllows();
+                $('.modal-backdrop').remove();
+            });
+        };
+
+        // 最初と最後の↑↓を再描画
+        var redrawDisableAllows = function() {
+            var items = $('.sortable-item');
+            items.find('a').removeClass('disabled');
+            items.first().find('a.up').addClass('disabled');
+            items.last().find('a.down').addClass('disabled');
+        };
+
+        $('.sortable-item a.up').click(function(e) {
+            e.preventDefault();
+            var current = $(this).parents('.list-group-item');
+            current.prev().before(current);
+            $('body').append($('<div class="modal-backdrop show"></div>'));
+            updateSortNo();
+        });
+
+        $('.sortable-item a.down').click(function(e) {
+            e.preventDefault();
+            var current = $(this).parents('.list-group-item');
+            current.next().after(current);
+            $('body').append($('<div class="modal-backdrop show"></div>'));
+            updateSortNo();
+        });
+    });
+
+</script>
+{% endblock javascript %}
+
+{% block main %}
+    <form role="form" class="form-row" name="form1" id="form1" method="post" action="?">
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'productplus.admin.nav.product.productitem.option'|trans }}：{{ ProductItem.name }}</span>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#ordererInfo"
+                                       aria-expanded="false" aria-controls="ordererInfo">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ form.children.text.vars.label }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.text) }}
+                                        {{ form_errors(form.text) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink" href="{{ url('admin_product_productitem') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'productplus.admin.common.back'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <a href="{{ url('admin_product_productitem_option_new', {item_id: ProductItem.id}) }}">
+                                <button class="btn btn-ec-regular"
+                                        type="button">{{ 'productplus.admin.common.new'|trans }}</button>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">{{ 'productplus.admin.common.save'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% if Options|length > 0 %}
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-body p-0">
+                        <div class="card rounded border-0 mb-2">
+                            <ul class="list-group list-group-flush sortable-container">
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-auto"><strong>&nbsp;</strong></div>
+                                        <div class="col-auto"><strong>{{ 'admin.common.id'|trans }}</strong></div>
+                                        <div class="col-auto"><strong>{{ 'productplus.form.productitem.option.label.text'|trans }}</strong></div>
+                                    </div>
+                                </li>
+                                {% for Option in Options %}
+                                    <li id="ex-class_name-{{ Option.id }}" class="list-group-item sortable-item" data-option-id="{{ Option.id }}" data-sort-no="{{ Option.sortNo }}">
+                                        <div class="row justify-content-around mode-view">
+                                            <div class="col-auto d-flex align-items-center"><i class="fa fa-bars text-ec-gray"></i></div>
+                                            <div class="col-auto d-flex align-items-center">{{ Option.id }}</div>
+                                            <div class="col d-flex align-items-center">
+                                                {{ Option.text }}
+                                            </div>
+                                            <div class="col-auto text-right">
+                                                <a class="btn btn-ec-actionIcon mr-3 up {% if loop.first %}disabled{% endif %}" href="" data-toggle="tooltip" data-placement="top" title="{{ 'productplus.admin.common.up'|trans }}">
+                                                    <i class="fa fa-arrow-up fa-lg text-secondary"></i>
+                                                </a>
+                                                <a class="btn btn-ec-actionIcon mr-3 down {% if loop.last %}disabled{% endif %}" href="" data-toggle="tooltip" data-placement="top" title="{{ 'productplus.admin.common.down'|trans }}">
+                                                    <i class="fa fa-arrow-down fa-lg text-secondary"></i>
+                                                </a>
+                                                <a class="btn btn-ec-actionIcon mr-3 action-edit" data-toggle="tooltip" data-placement="top" title="{{ 'productplus.admin.product.productitem.option.edit'|trans }}" href="{{ url('admin_product_productitem_option_edit', {item_id : ProductItem.id,  id : Option.id }) }}">
+                                                    <i class="fa fa-pencil fa-lg text-secondary"></i>
+                                                </a>
+                                                <a class="btn btn-ec-actionIcon mr-3" data-tooltip="tooltip" data-placement="top" title="{{ 'common.label.delete'|trans }}"
+                                                   data-toggle="modal" data-target="#delete_{{ Option.id }}">
+                                                    <i class="fa fa-close fa-lg text-secondary"></i>
+                                                </a>
+
+                                                <div class="modal fade" id="delete_{{ Option.id }}" tabindex="-1"
+                                                     role="dialog"
+                                                     aria-labelledby="delete_{{ Option.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title font-weight-bold">
+                                                                    {{ 'productplus.admin.product.productitem.option.modal.header'|trans }}</h5>
+                                                                <button class="close" type="button"
+                                                                        data-dismiss="modal"
+                                                                        aria-label="Close"><span
+                                                                            aria-hidden="true">×</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body text-left">
+                                                                <p class="text-left">
+                                                                    {{ 'productplus.admin.product.productitem.option.modal.body'|trans }}</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-ec-sub" type="button" data-dismiss="modal">{{ 'admin.common.cancel'|trans }}
+                                                                </button>
+                                                                <a class="btn btn-ec-delete" href="{{ url('admin_product_productitem_option_delete', {'item_id' : ProductItem.id ,'id' : Option.id}) }}" {{ csrf_token_for_anchor() }}
+                                                                   data-method="delete" data-confirm="false">{{ 'admin.common.delete'|trans }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <p>{{ 'productplus.admin.product.productitem.option.sortable'|trans }}</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <p>{{ 'productplus.admin.product.productitem.option.no_item'|trans }}</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+
+
+<table>
+    <tr>
+        <th>Shop</th>
+        <th>amount</th>
+    </tr>
+    {% for Item in OrderItems %}
+        <tr>
+            <td>{{ Item['name'] }}</td>
+            <td>{{ Item['member_sum'] }}</td>
+        </tr>
+    {% endfor %}
+</table>

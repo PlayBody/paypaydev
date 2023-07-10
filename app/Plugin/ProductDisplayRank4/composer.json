@@ -1,0 +1,1 @@
+{"name":"ec-cube\/ProductDisplayRank4","version":"1.0.4","description":"\u5546\u54c1\u304a\u3059\u3059\u3081\u9806\u4e26\u3073\u66ff\u3048\u30d7\u30e9\u30b0\u30a4\u30f3 for EC-CUBE4","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.7"},"extra":{"code":"ProductDisplayRank4","id":2020}}

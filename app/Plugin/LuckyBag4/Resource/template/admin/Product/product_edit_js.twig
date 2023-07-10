@@ -1,0 +1,77 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% set Config = repository('Plugin\\LuckyBag4\\Entity\\LuckyBag4Config').findOneBy({'id' : 1}) %}
+
+ <script>
+    var lucky_type = '{{ Config.SaleType.id }}';
+    var sale_type='{{ form.class.sale_type.vars.value }}';
+    {% if Product.id %}
+            $(function() {
+                if (lucky_type == sale_type){
+                    $('.c-primaryCol>.card:nth-child(2)').replaceWith($('#plg_lucky_bag4-product_lucky__append'));
+
+                    $.ajax({
+                        url: "{{ url('plg_product_lucky4_admin_product_product_lucky_list') }}",
+                        cache: false,
+                        data: {
+                            'id' : {{ Product.id }}
+                        },
+                    }).done(function(data, textStatus, jqXHR){
+                        $('#plg_lucky_bag4_product_lucky').html(data);
+                    }).fail(function(data, textStatus, errorThrown){
+                        $('#plg_lucky_bag4_product_lucky').html('取得に失敗しました。');
+                    });
+
+                }else{
+                    $('#plg_lucky_bag4-product_lucky__append').remove();
+                }
+            });
+    {% endif %}
+</script>
+
+<div id="plg_lucky_bag4-product_lucky__append">
+    {% if Product.id is not null %}
+        <div class="card rounded border-0 mb-4">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="d-inline-block" data-tooltip="true" data-placement="top">
+                            <span class="card-title">
+                                {{ 'plg_lucky_bag4.admin.product_lucky.product_lucky_info_title'|trans }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-4 text-right">
+                        <a data-toggle="collapse" href="#luckyConfig" aria-expanded="false"
+                           aria-controls="luckyConfig">
+                            <i class="fa fa-angle-up fa-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="collapse show ec-cardCollapse" id="luckyConfig">
+                <div class="card-body">
+                    <div id="plg_lucky_bag4_product_lucky">
+                    </div>
+                    <div class="d-block text-center text-center">
+                        <a href="{{ path('plg_product_lucky4_admin_product_product_lucky', { 'id' : Product.id }) }}" class="btn btn-ec-regular" data-action="confirm"
+                           title="{{ 'plg_lucky_bag4.admin.product_lucky.go_product_lucky_move_confirm_message'|trans }}">
+                            {{ 'plg_lucky_bag4.admin.product_lucky.go_product_lucky_btn_label'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+

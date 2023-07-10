@@ -1,0 +1,119 @@
+{#
+This file is part of the Coupon plugin
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+<script>
+    $(function () {
+        $('.c-primaryCol>div.card:nth-child(5)').after($('#market_place_delivery_free_fee__append'));
+        $('#market_place_delivery_free_fee__append').after($('#market_place_delivery_add_fee__append'));
+    })
+
+    $(function() {
+        $('#set_free_fee_all').on('click', function() {
+            var freefee = $('#{{ form.free_fee_all.vars.id }}').val();
+            if ($.isNumeric(freefee)) {
+                $('input[name$="[free_fee]"]').val(freefee);
+                return;
+            }
+            alert("{{ 'admin.setting.shop.delivery.fee.invalid'|trans }}");
+        });
+        $('#set_add_fee_all').on('click', function() {
+            var addfee = $('#{{ form.add_fee_all.vars.id }}').val();
+            if ($.isNumeric(addfee)) {
+                $('input[name$="[add_fee]"]').val(addfee);
+                return;
+            }
+            alert("{{ 'admin.setting.shop.delivery.fee.invalid'|trans }}");
+        });
+    });
+</script>
+
+
+    <div class="card rounded border-0 mb-4" id="market_place_delivery_free_fee__append">
+        <div class="card-header"><span>おまとめ府県別送料設定</span></div>
+        <div id="ex-delivery-fee" class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="row justify-content-start">
+                        <div class="col-2">
+                            <div class="d-inline-block align-middle" data-tooltip="true"
+                                 data-placement="top" title="{{ 'tooltip.setting.shop.delivery.apply_to_pref'|trans }}"><span
+                                        class="card-title">{{ 'admin.setting.shop.delivery.apply_to_pref__title'|trans }}</span><i
+                                        class="fa fa-question-circle fa-lg ml-1"></i></div>
+                        </div>
+                        <div class="col-3">
+                            {{ form_widget(form.free_fee_all) }}
+                            {{ form_errors(form.free_fee_all) }}
+                        </div>
+                        <div class="col-auto">
+                            <button id="set_free_fee_all" class="btn btn-ec-regular" type="button">{{ 'admin.setting.shop.delivery.apply_to_pref__button'|trans }}</button>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    {% for child in form.delivery_fees %}
+                        {% if loop.index % 2 != 0 %}<div class="row mb-2">{% endif %}
+                        <div class="col{{ loop.last ? '-6' }}">
+                            <div class="row">
+                                <div class="col-2">
+                                    <label>{{ child.vars.data.pref }}</label>
+                                </div>
+                                <div class="col pl-0">
+                                    {{ form_widget(child.free_fee) }}
+                                    {{ form_errors(child.free_fee) }}
+                                </div>
+                            </div>
+                        </div>
+                        {% if loop.index % 2 == 0 or loop.last %}</div>{% endif %}
+                    {% endfor %}
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<div class="card rounded border-0 mb-4" id="market_place_delivery_add_fee__append">
+    <div class="card-header"><span>府県別追加送料設定</span></div>
+    <div id="ex-delivery-fee" class="card-body p-0">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="row justify-content-start">
+                    <div class="col-2">
+                        <div class="d-inline-block align-middle" data-tooltip="true"
+                             data-placement="top" title="{{ 'tooltip.setting.shop.delivery.apply_to_pref'|trans }}"><span
+                                    class="card-title">{{ 'admin.setting.shop.delivery.apply_to_pref__title'|trans }}</span><i
+                                    class="fa fa-question-circle fa-lg ml-1"></i></div>
+                    </div>
+                    <div class="col-3">
+                        {{ form_widget(form.add_fee_all) }}
+                        {{ form_errors(form.add_fee_all) }}
+                    </div>
+                    <div class="col-auto">
+                        <button id="set_add_fee_all" class="btn btn-ec-regular" type="button">{{ 'admin.setting.shop.delivery.apply_to_pref__button'|trans }}</button>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                {% for child in form.delivery_fees %}
+                    {% if loop.index % 2 != 0 %}<div class="row mb-2">{% endif %}
+                    <div class="col{{ loop.last ? '-6' }}">
+                        <div class="row">
+                            <div class="col-2">
+                                <label>{{ child.vars.data.pref }}</label>
+                            </div>
+                            <div class="col pl-0">
+                                {{ form_widget(child.add_fee) }}
+                                {{ form_errors(child.add_fee) }}
+                            </div>
+                        </div>
+                    </div>
+                    {% if loop.index % 2 == 0 or loop.last %}</div>{% endif %}
+                {% endfor %}
+            </li>
+        </ul>
+    </div>
+</div>

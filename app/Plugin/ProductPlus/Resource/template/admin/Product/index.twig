@@ -1,0 +1,228 @@
+{#
+* Plugin Name : ProductPlus
+*
+* Copyright (C) BraTech Co., Ltd. All Rights Reserved.
+* http://www.bratech.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['product', 'productitem'] %}
+{% block title %}{{ 'productplus.admin.nav.product.productitem'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.product.product_management'|trans }}{% endblock %}
+
+{% block stylesheet %}
+<style type="text/css">
+    .list-group-item:hover {
+        z-index: inherit;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.widget.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js', 'admin') }}"></script>
+    <script>var bootstrapTooltip = $.fn.tooltip.noConflict();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    $(function() {
+        var oldSortNos = [];
+        // 画面の中のsortNo一覧を保持
+        $('.sortable-item').each(function() {
+            oldSortNos.push(this.dataset.sortNo);
+        });
+        // rsort
+        oldSortNos.sort(function(a, b) {
+            return a - b;
+        }).reverse();
+
+        $('.sortable-container').sortable({
+            items: '> .sortable-item',
+            cursor: 'move',
+            update: function(e, ui) {
+                $('body').append($('<div class="modal-backdrop show"></div>'));
+                updateSortNo();
+            }
+        });
+
+        var updateSortNo = function() {
+            // 並び替え後にsortNoを更新
+            var newSortNos = {};
+            var i = 0;
+            $('.sortable-item').each(function() {
+                newSortNos[this.dataset.itemId] = oldSortNos[i];
+                i++;
+            });
+
+            $.ajax({
+                url: '{{ url('admin_product_productitem_sort_no_move') }}',
+                type: 'POST',
+                headers: {
+                    'x-csrf-token': $('meta[name="x-csrf-token"]').attr('content')
+                },
+                data: newSortNos
+            }).done(function() {
+                // remove class disable
+                $('a.up.disabled').removeClass('disabled');
+                $('a.down.disabled').removeClass('disabled');
+                // First element
+                $('.sortable-item > li:nth-child(2) > div > div.col-auto.text-right > a.up').addClass('disabled');
+            }).always(function() {
+                redrawDisableAllows();
+                $('.modal-backdrop').remove();
+            });
+        };
+
+        // 最初と最後の↑↓を再描画
+        var redrawDisableAllows = function() {
+            var items = $('.sortable-item');
+            items.find('a').removeClass('disabled');
+            items.first().find('a.up').addClass('disabled');
+            items.last().find('a.down').addClass('disabled');
+        };
+
+        $('.sortable-item a.up').click(function(e) {
+            e.preventDefault();
+            var current = $(this).parents('.list-group-item');
+            current.prev().before(current);
+            $('body').append($('<div class="modal-backdrop show"></div>'));
+            updateSortNo();
+        });
+
+        $('.sortable-item a.down').click(function(e) {
+            e.preventDefault();
+            var current = $(this).parents('.list-group-item');
+            current.next().after(current);
+            $('body').append($('<div class="modal-backdrop show"></div>'));
+            updateSortNo();
+        });
+    });
+</script>
+{% endblock javascript %}
+
+{% block main %}
+
+    {% if ProductItems|length > 0 %}
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                <div class="card rounded border-0 mb-4">
+                    <div class="card-body p-0">
+                        <div class="card rounded border-0 mb-2">
+                            <ul class="list-group list-group-flush sortable-container">
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-auto"><strong>&nbsp;</strong></div>
+                                        <div class="col-auto"><strong>{{ 'admin.common.id'|trans }}</strong></div>
+                                        <div class="col-2"><strong>{{ 'productplus.form.productitem.label.name'|trans }}</strong></div>
+                                        <div class="col-2"><strong>{{ 'productplus.form.productitem.label.input_type'|trans }}</strong></div>
+                                        {% if isExtend %}
+                                            <div class="col-1 text-center"><strong>{{ 'searchplus.form.productitem.label.search_flg_short'|trans }}</strong></div>
+                                            <div class="col-1 text-center"><strong>{{ 'searchplus.form.productitem.label.keyword_flg_short'|trans }}</strong></div>
+                                        {% endif %}
+                                        <div class="col-1 text-center"><strong>{{ 'productplus.form.productitem.label.is_required_short'|trans }}</strong></div>
+                                        <div class="col">&nbsp;</div>
+                                    </div>
+                                </li>
+                                {% for ProductItem in ProductItems %}
+                                    <li id="ex-class_name-{{ ProductItem.id }}" class="list-group-item sortable-item" data-item-id="{{ ProductItem.id }}" data-sort-no="{{ ProductItem.sortNo }}">
+                                        <div class="row justify-content-around mode-view">
+                                            <div class="col-auto d-flex align-items-center"><i class="fa fa-bars text-ec-gray"></i></div>
+                                            <div class="col-auto d-flex align-items-center">{{ ProductItem.id }}</div>
+                                            <div class="col-2 d-flex align-items-center">
+                                                {% if ProductItem.input_type >= constant('Plugin\\ProductPlus\\Entity\\ProductItem::SELECT_TYPE') %}
+                                                <a href="{{ url('admin_product_productitem_option', {'item_id' : ProductItem.id})}}"> {{ ProductItem.name }}</a>
+                                                {% else %}
+                                                    {{ ProductItem.name }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-2 d-flex align-items-center">{{ arrTYPE[ProductItem.input_type] }}</div>
+                                            {% if isExtend %}
+                                                <div class="col-1 d-flex align-items-center justify-content-center">{% if ProductItem.search_flg %}○{% endif %}</div>
+                                                <div class="col-1 d-flex align-items-center justify-content-center">{% if ProductItem.keyword_flg %}○{% endif %}</div>
+                                            {% endif %}
+                                            <div class="col-1 d-flex align-items-center justify-content-center">{% if ProductItem.is_required %}○{% endif %}</div>
+                                            <div class="col text-right">
+                                                <a class="btn btn-ec-actionIcon mr-3 up {% if loop.first %}disabled{% endif %}" href="" data-toggle="tooltip" data-placement="top" title="{{ 'productplus.admin.common.up'|trans }}">
+                                                    <i class="fa fa-arrow-up fa-lg text-secondary"></i>
+                                                </a>
+                                                <a class="btn btn-ec-actionIcon mr-3 down {% if loop.last %}disabled{% endif %}" href="" data-toggle="tooltip" data-placement="top" title="{{ 'productplus.admin.common.down'|trans }}">
+                                                    <i class="fa fa-arrow-down fa-lg text-secondary"></i>
+                                                </a>
+                                                <a class="btn btn-ec-actionIcon mr-3 action-edit" data-toggle="tooltip" data-placement="top" title="{{ 'productplus.admin.product.productitem.edit'|trans }}" href="{{ url('admin_product_productitem_edit', {'id' : ProductItem.id})}}">
+                                                    <i class="fa fa-pencil fa-lg text-secondary"></i>
+                                                </a>
+                                                <a class="btn btn-ec-actionIcon mr-3" data-tooltip="tooltip" data-placement="top" title="{{ 'common.label.delete'|trans }}"
+                                                   data-toggle="modal" data-target="#delete_{{ ProductItem.id }}">
+                                                    <i class="fa fa-close fa-lg text-secondary"></i>
+                                                </a>
+
+                                                <div class="modal fade" id="delete_{{ ProductItem.id }}" tabindex="-1"
+                                                     role="dialog"
+                                                     aria-labelledby="delete_{{ ProductItem.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title font-weight-bold">
+                                                                    {{ 'productplus.admin.product.productitem.modal.header'|trans }}</h5>
+                                                                <button class="close" type="button"
+                                                                        data-dismiss="modal"
+                                                                        aria-label="Close"><span
+                                                                            aria-hidden="true">×</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body text-left">
+                                                                <p class="text-left">
+                                                                    {{ 'productplus.admin.product.productitem.modal.body'|trans }}</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-ec-sub" type="button" data-dismiss="modal">{{ 'admin.common.cancel'|trans }}
+                                                                </button>
+                                                                <a class="btn btn-ec-delete" href="{{ url('admin_product_productitem_delete', {'id' : ProductItem.id}) }}" {{ csrf_token_for_anchor() }}
+                                                                   data-method="delete" data-confirm="false">{{ 'admin.common.delete'|trans }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <p>{{ 'productplus.admin.product.productitem.no_item'|trans }}</p>
+    {% endif %}
+    <div class="c-conversionArea">
+        <div class="c-conversionArea__container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-6">
+                    <div class="c-conversionArea__leftBlockItem">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                        <div class="col-auto">
+                            <a href="{{ url('admin_product_productitem_new') }}">
+                            <button class="btn btn-ec-regular"
+                                    type="button">{{ 'productplus.admin.common.new'|trans }}</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

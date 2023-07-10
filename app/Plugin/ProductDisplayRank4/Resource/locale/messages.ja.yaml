@@ -1,0 +1,9 @@
+admin.product.product_display_rank_csv_upload: 商品表示順CSV登録
+admin.product.product_display_rank_csv.product_id_col: 商品ID
+admin.product.product_display_rank_csv.product_display_rank_col: 表示順
+
+admin.product.product_display_rank_csv.product_id_description: 商品ID
+admin.product.product_display_rank_csv.product_display_rank_description: 表示する順位を整数で指定してください(降順か昇順かは設定で変更可能です)
+
+tooltip.product_display_rank.csv_upload: 所定の型のCSVデータを用いて商品を一括で登録することができます。
+tooltip.product_display_rank.csv_format: 雛形ファイルをダウンロードして編集すれば、簡単に所定の型のCSVデータを作成できます。

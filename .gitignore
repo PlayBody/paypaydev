@@ -1,0 +1,9 @@
+symfony.lock
+composer.lock
+.dockerignore
+.env
+.env.dist
+.env.install
+.maintenance
+var/
+.devcontainer/

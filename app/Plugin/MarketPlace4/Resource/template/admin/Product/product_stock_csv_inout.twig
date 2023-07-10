@@ -1,0 +1,117 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['product', 'product_stock_csv_inout'] %}
+
+{% block title %}{{ 'market_place4.admin.product_stock_csv_inout.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'market_place4.admin.product_stock_csv_inout.sub_title'|trans }}{% endblock %}
+
+
+{% block javascript %}
+<script src="{{ asset('assets/js/vendor/spin.min.js', 'admin') }}"></script>
+    <script>
+        $(function() {
+            var opts = {
+                lines: 13,
+                length: 30,
+                width: 2,
+                radius: 12,
+                corners: 1,
+                rotate: 0,
+                direction: 1,
+                color: '#BBB',
+                speed: 1,
+                trail: 67,
+                shadow: true,
+                hwaccel: false,
+                className: 'spinner',
+                zIndex: 2e9,
+                top: top
+            };
+
+            ImageSpinner = new Spinner(opts).spin(document.getElementById('spinner'));
+            ImageSpinner.stop();
+
+            $('#upload-form').submit(function() {
+                $('#upload-button').attr('disabled', 'disabled');
+                $('#download-button').attr('disabled', 'disabled');
+                ImageSpinner.spin(document.getElementById('spinner'));
+            });
+
+            $('#file-select').click(function() {
+                $('#admin_csv_import_import_file').click();
+                $('#admin_csv_import_import_file').on('change', function() {
+                    var files = $(this).prop('files');
+                    if (files.length) {
+                        $('#admin_csv_import_import_file_name').text(files[0].name);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+
+<div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
+            <div class="card rounded border-0 mb-4">
+                <div class="card-header">
+                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.csv_upload'|trans }}"><span>{{ 'admin.common.csv_upload'|trans }}</span><i class="fa fa-question-circle fa-lg fa-lg ml-1"></i></div>
+                </div>
+                <div id="ex-csv_product-upload" class="card-body">
+                    <div class="row">
+                        <div class="col-2"><span>{{ 'admin.common.csv_select'|trans }}</span></div>
+                        <div class="col">
+                            <form id="upload-form" method="post" action="{{ url('market_place4_admin_product_stock_csv_inout') }}" enctype="multipart/form-data">
+                                {{ form_widget(form._token) }}
+                                <div class="mb-2">
+                                    <span id="file-select" class="btn btn-ec-regular mr-2">{{ 'admin.common.file_select'|trans }}</span>
+                                    <span id="admin_csv_import_import_file_name">{{ 'admin.common.file_select_empty'|trans }}</span>
+                                    {{ form_widget(form.import_file, {'attr': {'accept': 'text/csv,text/tsv', 'class': 'd-none'}}) }}
+                                    {{ form_errors(form.import_file) }}
+                                </div>
+                                <button class="btn btn-ec-conversion" id="upload-button" type="submit">{{ 'admin.common.bulk_registration'|trans }}</button>
+ {% for error in errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
+            <div class="card rounded border-0 mb-4">
+                <div class="card-header">
+                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.csv_download'|trans }}"><span>{{ 'admin.common.csv_download'|trans }}</span><i class="fa fa-question-circle fa-lg fa-lg ml-1"></i></div>
+                </div>
+                <div id="ex-csv_product-download" class="card-body">
+                    <div class="row">
+                        <div class="col">
+                                <a href="{{ url('market_place4_admin_product_stock_export') }}" class="btn btn-ec-conversion" id="upload-button" type="submit">{{ 'admin.common.csv_download'|trans }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
